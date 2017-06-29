@@ -577,7 +577,6 @@ function RacialBonuses(racename){
 		}
 	}
 	else if(racename=="Half-Orc") {
-		document.getElementById('form105_1').value += ""+"\n\n";
 		setProfs.push("intimidation");
 		document.getElementById('form105_1').value += "Relentless Endurance. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit points instead. You can't use this feature again until you finish a long rest."+"\n\n";
 		document.getElementById('form105_1').value += "Savage Attacks. When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit."+"\n\n";
