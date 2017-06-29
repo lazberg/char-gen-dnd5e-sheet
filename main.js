@@ -135,6 +135,7 @@ function RollName(gender){
 	var surname = race.namepool[2];
 	firstName = maleOrFemale[Math.floor((Math.random() *maleOrFemale.length))];
 	lastName = surname[[Math.floor((Math.random() *surname.length))]];
+	document.getElementById("FDFXFA_PDFName").innerHTML = "CharSheet_"+firstName+""+lastName+".pdf";
 	console.log(firstName + " " + lastName);
 }
 
