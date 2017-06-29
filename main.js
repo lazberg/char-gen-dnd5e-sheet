@@ -10,6 +10,7 @@ var primary = 0;
 var secondary = 0;
 var languages = [];
 var setProfs = [];
+var toolProfs = [];
 
 var langList = [ "Common", "Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", "Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" ];
 
@@ -56,20 +57,20 @@ var Names = [, ,];
 */
 
 // ABILITIES: STR, DEX, CON, INT, WIS, CHA
-var hillDwarf = {race:"Hill Dwarf", ability:[0, 0, 2, 0, 1, 0], speed:25, namepool:dwarfNames, vision:"darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
-var mountainDwarf = {race:"Mountain Dwarf", ability:[2, 0, 2, 0, 0, 0], speed:25, namepool:dwarfNames, vision:"darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
-var highElf = {race:"High Elf", ability:[0, 2, 0, 1, 0, 0], speed:30, namepool:elfNames, vision:"darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:1};
-var woodElf = {race:"Wood Elf", ability:[0, 2, 0, 0, 1, 0], speed:35, namepool:elfNames, vision:"darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:0};
-var darkElf = {race:"Dark Elf (Drow)", ability:[0, 2, 0, 0, 0, 1], speed:30, namepool:elfNames, vision:"darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:0};
+var hillDwarf = {race:"Hill Dwarf", ability:[0, 0, 2, 0, 1, 0], speed:25, namepool:dwarfNames, vision:"Darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
+var mountainDwarf = {race:"Mountain Dwarf", ability:[2, 0, 2, 0, 0, 0], speed:25, namepool:dwarfNames, vision:"Darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
+var highElf = {race:"High Elf", ability:[0, 2, 0, 1, 0, 0], speed:30, namepool:elfNames, vision:"Darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:1};
+var woodElf = {race:"Wood Elf", ability:[0, 2, 0, 0, 1, 0], speed:35, namepool:elfNames, vision:"Darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:0};
+var darkElf = {race:"Dark Elf (Drow)", ability:[0, 2, 0, 0, 0, 1], speed:30, namepool:elfNames, vision:"Superior Darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:0};
 var lightfootHalfling = {race:"Lightfoot Halfling", ability:[0, 2, 0, 0, 0, 1], speed:25, namepool:halflingNames, vision:"none", lang1:"Common", lang2:"Halfling", extraLanguage:0};
 var stoutHalfling = {race:"Stout Halfling", ability:[0, 2, 1, 0, 0, 0], speed:25, namepool:halflingNames, vision:"none", lang1:"Common", lang2:"Halfling", extraLanguage:0};
 var human = {race:"Human", ability:[1, 1, 1, 1, 1, 1], speed:30, namepool:humanNames, vision:"none", lang1:"Common", lang2:"none", extraLanguage:1};
 var dragonborn = {race:"Dragonborn", ability:[2, 0, 0, 0, 0, 1], speed:30, namepool:dragonbornNames, vision:"none", lang1:"Common", lang2:"Draconic", extraLanguage:0};
-var forestGnome = {race:"Forest Gnome", ability:[0, 1, 0, 2, 0, 0], speed:25, namepool:gnomeNames, vision:"darkvision", lang1:"Common", lang2:"Gnomish", extraLanguage:0};
-var rockGnome = {race:"Rock Gnome", ability:[0, 0, 1, 2, 0, 0], speed:25, namepool:gnomeNames, vision:"darkvision", lang1:"Common", lang2:"Gnomish", extraLanguage:0};
-var halfElf = {race:"Half-Elf", ability:[0, 1, 1, 0, 0, 2], speed:30, namepool:humanNames, vision:"darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:1};
-var halfOrc = {race:"Half-Orc", ability:[2, 0, 1, 0, 0, 0], speed:30, namepool:halforcNames, vision:"darkvision", lang1:"Common", lang2:"Orc", extraLanguage:0};
-var tiefling = {race:"Tiefling", ability:[0, 0, 0, 1, 0, 2], speed:30, namepool:tieflingNames, vision:"darkvision", lang1:"Common", lang2:"Infernal", extraLanguage:0};
+var forestGnome = {race:"Forest Gnome", ability:[0, 1, 0, 2, 0, 0], speed:25, namepool:gnomeNames, vision:"Darkvision", lang1:"Common", lang2:"Gnomish", extraLanguage:0};
+var rockGnome = {race:"Rock Gnome", ability:[0, 0, 1, 2, 0, 0], speed:25, namepool:gnomeNames, vision:"Darkvision", lang1:"Common", lang2:"Gnomish", extraLanguage:0};
+var halfElf = {race:"Half-Elf", ability:[0, 1, 1, 0, 0, 2], speed:30, namepool:humanNames, vision:"Darkvision", lang1:"Common", lang2:"Elvish", extraLanguage:1};
+var halfOrc = {race:"Half-Orc", ability:[2, 0, 1, 0, 0, 0], speed:30, namepool:halforcNames, vision:"Darkvision", lang1:"Common", lang2:"Orc", extraLanguage:0};
+var tiefling = {race:"Tiefling", ability:[0, 0, 0, 1, 0, 2], speed:30, namepool:tieflingNames, vision:"Darkvision", lang1:"Common", lang2:"Infernal", extraLanguage:0};
 // var blank = {race:"Unknown Race", ability:[0, 0, 0, 0, 0, 0], speed:30};
 var racials = [human, highElf, rockGnome, halfOrc, mountainDwarf, hillDwarf, darkElf, woodElf, lightfootHalfling, stoutHalfling, dragonborn, forestGnome, halfElf, tiefling];
 
@@ -92,6 +93,19 @@ var classes = [barbarian, bard, cleric, druid, fighter, monk, paladin, ranger, r
 
 var classRoll = undefined;
 
+var blackDrac = {dragon:"Black", damage:"Acid", breath:"5 by 30 ft. line (Dex. Save)"};
+var blueDrac = {dragon:"Blue", damage:"Lightning", breath:"5 by 30 ft. line (Dex. Save)"};
+var brassDrac = {dragon:"Brass", damage:"Fire", breath:"5 by 30 ft. line (Dex. Save)"};
+var bronzeDrac = {dragon:"Bronze", damage:"Lightning", breath:"5 by 30 ft. line (Dex. Save)"};
+var copperDrac = {dragon:"Copper", damage:"Acid", breath:"5 by 30 ft. line (Dex. Save)"};
+var goldDrac = {dragon:"Gold", damage:"Fire", breath:"15 ft. cone (Dex. Save)"};
+var greenDrac = {dragon:"Green", damage:"Poison", breath:"15 ft. cone (Con. Save)"};
+var redDrac = {dragon:"Red", damage:"Fire", breath:"15 ft. cone (Dex. Save)"};
+var silverDrac = {dragon:"Silver", damage:"Cold", breath:"15 ft. cone (Con. Save)"};
+var whiteDrac = {dragon:"White", damage:"Cold", breath:"15 ft. cone (Con. Save)"};
+var ancestry = [blackDrac,blueDrac,brassDrac,bronzeDrac,copperDrac,goldDrac,greenDrac,redDrac,silverDrac,whiteDrac];
+var draconicAncestry = ancestry[Math.floor((Math.random()*ancestry.length))];
+
 function RollClass() {
 	classRoll = classes[Math.floor((Math.random() *classes.length))];
 }
@@ -103,7 +117,10 @@ function ResetStats() {
 	wizard.secondaryStat = RandomStatPriority("CON", "DEX");
 	languages = [];
 	setProfs = [];
-	// halfElf.namepool = RandomStatPriority(elfNames, humanNames);
+	toolProfs = [];
+	halfElf.namepool = RandomStatPriority(namePool[0], namePool[1]);
+	//console.log(halfElf.namepool);
+	document.getElementById('form102_1').innerHTML="";
 	//paladin.primaryStat = RandomStatPriority("STR", "CHA");
 }
 
@@ -134,6 +151,7 @@ function RollName(gender){
 	lastName = surname[[Math.floor((Math.random() *surname.length))]];
 	document.getElementById("FDFXFA_PDFName").innerHTML = "CharSheet_"+firstName+""+lastName+".pdf";
 	console.log(firstName + " " + lastName);
+	//console.log(race.namepool);
 }
 
 function RollLanguages(){
@@ -157,7 +175,7 @@ function RollLanguages(){
 			}
 		}
 	}
-	console.log(languages);
+	//console.log(languages);
 }
 
 function Dice(d) {
@@ -171,13 +189,29 @@ function InputProfLang() {
 		if(i<languages.length-1){
 			document.getElementById("form102_1").innerHTML += ", ";
 		}
+		else if(i==languages.length-1){
+			document.getElementById("form102_1").innerHTML += "\n\n";
+		}
+	}
+}
+
+function InputToolProfs() {
+	document.getElementById("form102_1").innerHTML += "Tools: \n";
+	for(var i=0;i<toolProfs.length;i++){
+		document.getElementById("form102_1").innerHTML += toolProfs[i];
+		if(i<toolProfs.length-1){
+			document.getElementById("form102_1").innerHTML += ", ";
+		}
+		else if(i==languages.length-1){
+			document.getElementById("form102_1").innerHTML += "\n\n";
+		}
 	}
 }
 
 function RollRace() {
 	race = racials[Math.floor((Math.random() *racials.length))];
-	//race = racials[1];
-	console.log(race);
+	//race = racials[12];
+	//console.log(race);
 	RollGender();
 	RollName(sex);
 	RollLanguages();
@@ -232,10 +266,12 @@ function RollAbility(){
 	document.getElementById('form59_1').value = abilityModifier[3];		//INTMOD
 	document.getElementById('form63_1').value = abilityModifier[4];		//WISMOD
 	document.getElementById('form62_1').value = abilityModifier[5];		//CHAMOD
+	RacialBonuses(race.race);
 	RollHitPoints();
 	RollSkills();
 	document.getElementById('form69_1').value = 2; // PROFICIENCY
 	document.getElementById('form87_1').value += abilityModifier[1]; // INITIATIVE
+	
 	DisableFields();
 }
 
@@ -319,8 +355,15 @@ function GetModifier(score) {
 
 function RollHitPoints() {
 	hitPoints = classRoll.hitDice+abilityModifier[2];
-	console.log(hitPoints+" HP");
+	
+	if(race.race=="Hill Dwarf"){
+		hitPoints++;
+	}
+	
+	//console.log(hitPoints+" HP");
 	document.getElementById('form73_1').value=hitPoints;
+	document.getElementById('form67_1').value=1;
+	document.getElementById('form88_1').value = "d"+classRoll.hitDice;
 }
 
 function DisableFields(){
@@ -355,11 +398,28 @@ function RollSkills(){
 }
 
 function Proficiencies(){
+	//SAVING THROWS
 	document.getElementsByClassName("st"+classRoll.savingThrows[0])[0].checked = true;
 	document.getElementsByClassName("save"+classRoll.savingThrows[0])[0].value = parseInt(document.getElementsByClassName("save"+classRoll.savingThrows[0])[0].value)+2;
 	document.getElementsByClassName("st"+classRoll.savingThrows[1])[0].checked = true;
 	document.getElementsByClassName("save"+classRoll.savingThrows[1])[0].value = parseInt(document.getElementsByClassName("save"+classRoll.savingThrows[1])[0].value)+2;
 	
+	for(var i=0;i<classRoll.profCount;i++) {
+		var newProf = classRoll.profSkills[Math.floor((Math.random()*classRoll.profSkills.length))];
+		if(setProfs.includes(newProf)){
+			console.log("They already know "+newProf+"!");
+			i--;
+		}
+		else {
+			setProfs.push(newProf);
+		}
+	}
+	for(var i=0;i<setProfs.length;i++){
+			document.getElementsByClassName("cb"+setProfs[i])[0].checked = true;
+			var currentSkill = parseInt(document.getElementsByClassName(setProfs[i])[0].value);	
+			document.getElementsByClassName(setProfs[i])[0].value = currentSkill+2;
+	}
+	/*
 	var j = -1;
 	var t = -1;
 	for (var i = 0; i<classRoll.profCount;i){
@@ -386,5 +446,148 @@ function Proficiencies(){
 		else{
 			console.log("???");
 		}
+	}*/
+}
+
+
+function RacialBonuses(racename){
+	if(race.vision=="none"){
+		document.getElementById('form105_1').value = "";
+	}
+	else{
+		document.getElementById('form105_1').value = race.vision + "\n\n";
+	}
+	
+	if(racename=="Hill Dwarf") {
+		//DRAWF STATS
+		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
+		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
+		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
+		toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
+		InputToolProfs();
+		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
+		//HILL DWARF STATS
+		document.getElementById('form105_1').value += "Dwarven Toughness. Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."+"\n\n";
+		
+	}
+	else if(racename=="Mountain Dwarf") {
+		//DRAWF STATS
+		//Dwarven Resilience
+		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
+		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
+		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
+		toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
+		InputToolProfs();
+		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
+		//MOUNTAIN DWARF STATS
+		document.getElementById('form105_1').value += "Dwarven Armor Training. You have proficiency with light and medium armor."+"\n\n";
+	}
+	else if(racename=="High Elf") {
+		//ELF STATS
+		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		setProfs.push("perception");
+		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		//HIGH ELF
+		document.getElementById('form105_1').value += "Elf Weapon Training. You have proficiency with the longsword, shortsword, shortbow, and longbow."+ "\n\n";
+		document.getElementById('form105_1').value += "Cantrip. You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it."+ "\n\n";
+	}
+	else if(racename=="Wood Elf") {
+		//ELF STATS
+		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		setProfs.push("perception");
+		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		//WOOD ELF
+		document.getElementById('form105_1').value += "Elf Weapon Training. You have proficiency with the longsword, shortsword, shortbow, and longbow."+ "\n\n";
+		document.getElementById('form105_1').value += "Mask of the Wild. You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."+ "\n\n";
+	}
+	else if(racename=="Dark Elf (Drow)") {
+		//ELF STATS
+		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		setProfs.push("perception");
+		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		//DARK ELF
+		document.getElementById('form105_1').value += "Sunlight Sensitivity. You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight."+ "\n\n";
+		document.getElementById('form105_1').value += "Drow Magic. You know the Dancing Lights cantrip."+ "\n\n";
+		document.getElementById('form105_1').value += "Drow Weapon Training. You have proficiency with rapiers, shortswords, and hand crossbows."+ "\n\n";		
+	}
+	else if(racename=="Lightfoot Halfling") {
+		//HALFLING STATS
+		document.getElementById('form105_1').value += "Lucky. When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."+ "\n\n";
+		document.getElementById('form105_1').value += "Brave. You have advantage on saving throws against being frightened."+ "\n\n";
+		document.getElementById('form105_1').value += "Halfling Nimbleness. You can move through the space of any creature that is of a size larger than yours."+ "\n\n";
+		//LIGHTFOOT
+		document.getElementById('form105_1').value += "Naturally Stealthy. You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."+ "\n\n";
+	}
+	else if(racename=="Stout Halfling") {
+		//HALFLING STATS
+		document.getElementById('form105_1').value += "Lucky. When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."+ "\n\n";
+		document.getElementById('form105_1').value += "Brave. You have advantage on saving throws against being frightened."+ "\n\n";
+		document.getElementById('form105_1').value += "Halfling Nimbleness. You can move through the space of any creature that is of a size larger than yours."+ "\n\n";
+		//STOUT
+		document.getElementById('form105_1').value += "Stout Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
+	}
+	else if(racename=="Human") {
+		//nothing...
+	}
+	else if(racename=="Dragonborn") {
+		draconicAncestry = ancestry[Math.floor((Math.random()*ancestry.length))];
+		//DRAGONBORN STATS
+		document.getElementById('form105_1').value += "Draconic Ancestry. You have draconic ancestry of the "+draconicAncestry.dragon+" Dragons. ("+draconicAncestry.breath+" range and "+draconicAncestry.damage+" damage)"+ "\n\n";
+		document.getElementById('form105_1').value += "Breath Weapon. You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape and damage type of the exhalation. When you use your breath weapon, each creature in the area of the exhalation must make a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. ("+(8+abilityModifier[2]+2)+"). A creature takes 2d6 damage on a failed save, and half as much damage on a successful one."+ "\n\n";
+		document.getElementById('form105_1').value += "Damage Resistance. You have resistance to "+draconicAncestry.damage+"\n\n";
+	}
+	else if(racename=="Forest Gnome") {
+		//GNOME STATS
+		document.getElementById('form105_1').value+="Gnome Cunning. You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic."+"\n\n";
+		//FOREST
+		document.getElementById('form105_1').value+="Natural Illusionist. You know the minor illusion cantrip. Intelligence is your spellcasting ability for it."+"\n\n";
+	}
+	else if(racename=="Rock Gnome") {
+		//GNOME STATS
+		document.getElementById('form105_1').value+="Gnome Cunning. You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic."+"\n\n";
+		//ROCK
+		document.getElementById('form105_1').value+="Artificer's Lore. Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply."+"\n\n";
+		document.getElementById('form105_1').value+="Tinker. Using your Tinker's Tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours, or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time."+"\n";
+		var t = Dice(3);
+		if(t==1){
+			document.getElementById('form105_1').value+="Clockwork Toy. This toy is a clockwork animal, monster, or person, such as a frog, mouse, bird, dragon, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noise as appropriate to the creature it represents."+"\n\n";
+		}
+		else if(t==2){
+			document.getElementById('form105_1').value+="Fire Starter. The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action."+"\n\n";
+		}
+		else if(t==3){
+			document.getElementById('form105_1').value+="Music Box. When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed."+"\n\n";
+		}
+		toolProfs.push("Artisan's Tools/Tinker's Tools");	
+	}
+	else if(racename=="Half-Elf") {
+		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
+		for(var i=0;i<2;i++) {
+			var newProf = bard.profSkills[Math.floor((Math.random()*bard.profSkills.length))];
+			if(setProfs.includes(newProf)){
+				console.log("They already know "+newProf+"!");
+				i--;
+			}
+			else {
+				setProfs.push(newProf);
+			}
+		}
+	}
+	else if(racename=="Half-Orc") {
+		document.getElementById('form105_1').value += ""+"\n\n";
+		setProfs.push("intimidation");
+		document.getElementById('form105_1').value += "Relentless Endurance. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit points instead. You can't use this feature again until you finish a long rest."+"\n\n";
+		document.getElementById('form105_1').value += "Savage Attacks. When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit."+"\n\n";
+	}
+	else if(racename=="Tiefling") {
+		document.getElementById('form105_1').value += "Hellish Resistance. You have resistance to fire damage."+"\n\n";
+		document.getElementById('form105_1').value += "Infernal Legacy. You know the thaumaturgy cantrip."+"\n\n";
+		
+	}
+	else {
+		console.log("Can't determine race");
 	}
 }
