@@ -9,11 +9,19 @@ var abilityModifier = [];
 var primary = 0;
 var secondary = 0;
 var languages = [];
+var extraLanguage = 0;
 var setProfs = [];
 var toolProfs = [];
+var lastTool = undefined;
+var bg = undefined;
+var bgSpec = undefined;
 
+//LANGUAGE
 var langList = [ "Common", "Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", "Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" ];
-
+//VARIOUS TOOLS?
+var instrumentsList = [ "Bagpipes", "Drum", "Dulcimer", "Flute", "Lute", "Lyre", "Horn", "Pan flute", "Shawm", "Viol" ];
+var toolsList = [ "Alchemist's supplies", "Brewer's supplies", "Calligrapher's supplies", "Carpenter's tools", "Cartographer's tools", "Cobbler's tools", "Cook's utensils", "Glassblower's tools", "Jeweler's tools", "Leatherworker's tools", "Mason's tools", "Painter's supplies", "Potter's tools", "Smith's tools", "Tinker's tools", "Weaver's tools", "Weaver's tools", "Woodcarver's tools" ];
+var gamesList = [ "Dice set", "Dragonchess set", "Playing card set", "Three-Dragon Ante set" ];
 // NAMES
 var elfMale = [ "Adran", "Aelar", "Aramil", "Arannis", "Aust", "Beiro", "Berrian", "Carric", "Enialis", "Erdan", "Erevan", "Galinndan", "Hadarai", "Heian", "Himo", "Immeral", "Ivellios", "Laucian", "Mindartis", "Paelias", "Peren", "Quarion", "Riardon", "Rolen", "Soveliss", "Thamior", "Tharivol", "Theren", "Varis" ];
 var elfFemale = [ "Adrie", "Althaea", "Anastrianna", "Andraste", "Antinua", "Bethrynna", "Birel", "Caelynn", "Drusilia", "Enna", "Felosial", "Ielenia", "Jelenneth", "Keyleth", "Leshanna", "Lia", "Meriele", "Mialee", "Naivara", "Quelenna", "Quillathe", "Sariel", "Shanairra", "Shava", "Silaqui", "Theirastra", "Thia", "Vadania", "Valanthe", "Xanaphia" ];
@@ -56,6 +64,7 @@ var Surname =
 var Names = [, ,];
 */
 
+// RACES
 // ABILITIES: STR, DEX, CON, INT, WIS, CHA
 var hillDwarf = {race:"Hill Dwarf", ability:[0, 0, 2, 0, 1, 0], speed:25, namepool:dwarfNames, vision:"Darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
 var mountainDwarf = {race:"Mountain Dwarf", ability:[2, 0, 2, 0, 0, 0], speed:25, namepool:dwarfNames, vision:"Darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
@@ -74,6 +83,7 @@ var tiefling = {race:"Tiefling", ability:[0, 0, 0, 1, 0, 2], speed:30, namepool:
 // var blank = {race:"Unknown Race", ability:[0, 0, 0, 0, 0, 0], speed:30};
 var racials = [human, highElf, rockGnome, halfOrc, mountainDwarf, hillDwarf, darkElf, woodElf, lightfootHalfling, stoutHalfling, dragonborn, forestGnome, halfElf, tiefling];
 
+//CLASSES
 var barbarian = {role:"Barbarian", primaryStat:"STR", secondaryStat:"CON", savingThrows:["str","con"], hitDice:12, profCount:2, profSkills:["animalhandling", "athletics", "intimidation","nature","perception","survival"]};
 var bard = {role:"Bard", primaryStat:"CHA", secondaryStat:"DEX", savingThrows:["dex","cha"], hitDice:8, profCount:3, profSkills: [ "athletics", "acrobatics", "sleightofhand", "stealth", "arcana", "history", "investigation", "nature", "religion", "animalhandling", "insight", "medicine", "perception", "survival", "deception", "intimidation", "performance", "persuasion" ]};
 var cleric = {role:"Cleric", primaryStat:"WIS", secondaryStat:"RANDOM", savingThrows:["wis","cha"], hitDice:8, profCount:2, profSkills:[ "history", "insight", "medicine", "persuasion", "religion" ]};
@@ -93,6 +103,7 @@ var classes = [barbarian, bard, cleric, druid, fighter, monk, paladin, ranger, r
 
 var classRoll = undefined;
 
+//DRACONIC DESCENT FOR SORCERERS AND DRAGONBORN
 var blackDrac = {dragon:"Black", damage:"Acid", breath:"5 by 30 ft. line (Dex. Save)"};
 var blueDrac = {dragon:"Blue", damage:"Lightning", breath:"5 by 30 ft. line (Dex. Save)"};
 var brassDrac = {dragon:"Brass", damage:"Fire", breath:"5 by 30 ft. line (Dex. Save)"};
@@ -105,6 +116,24 @@ var silverDrac = {dragon:"Silver", damage:"Cold", breath:"15 ft. cone (Con. Save
 var whiteDrac = {dragon:"White", damage:"Cold", breath:"15 ft. cone (Con. Save)"};
 var ancestry = [blackDrac,blueDrac,brassDrac,bronzeDrac,copperDrac,goldDrac,greenDrac,redDrac,silverDrac,whiteDrac];
 var draconicAncestry = ancestry[Math.floor((Math.random()*ancestry.length))];
+
+//BACKGROUNDS
+var acolyte = {name:"Acolyte", speciality:["none"], profSkills:["insight", "religion"], tools:["none"], extraLanguage:2};
+var charlatan = {name:"Charlatan", speciality:["none"], profSkills:["deception", "sleightofhand"], tools:["Disguise kit", "Forgery kit"], extraLanguage:0};
+var criminal = {name:"Criminal", speciality:[ "Blackmailer", "Burglar", "Enforcer", "Fence", "Highway robber", "Hired killer", "Pickpocket", "Smuggler" ], profSkills:["deception","stealth"], tools:["Thieves' tools"], extraLanguage:0};
+var entertainer = {name:"Entertainer", speciality:[ "Actor", "Dancer", "Fire-eater", "Jester", "Juggler", "Instrumentalist", "Poet", "Singer", "Storyteller", "Tumbler" ], profSkills:["acrobatics","performance"], tools:["Disguise kit"], extraLanguage:0};
+var folkhero = {name:"Folk Hero", speciality:["none"], profSkills:["animalhandling","survival"], tools:["none"], extraLanguage:0};
+var guildartisan = {name:"Guild Artisan", speciality:["none"], profSkills:["insight","persuasion"], tools:["none"], extraLanguage:1};
+var hermit = {name:"Hermit", speciality:["none"], profSkills:["medicine","religion"], tools:["Herbalism kit"], extraLanguage:1};
+var noble = {name:"Noble", speciality:["none"], profSkills:["history","persuasion"], tools:["none"], extraLanguage:1};
+var outlander = {name:"Outlander", speciality:[ "Forester", "Trapper", "Homesteader", "Guide", "Exile", "Outcast", "Bounty hunter", "Pilgrim", "Tribal nomad", "Hunter-gatherer", "Tribal marauder" ], profSkills:["athletics","survival"], tools:["none"], extraLanguage:1};
+var sage = {name:"Sage", speciality:[ "Alchemist", "Astronomer", "Discredited academic", "Librarian", "Professor", "Researcher", "Wizard's apprentice", "Scribe" ], profSkills:["arcana","history"], tools:["none"], extraLanguage:2};
+var sailor = {name:"Sailor", speciality:["none"], profSkills:["athletics","perception"], tools:["Navigator's tools"], extraLanguage:0};
+var soldier = {name:"Soldier", speciality:[ "Officer", "Scout", "Infantry", "Cavalry", "Healer", "Quartermaster", "Standard bearer", "Support staff" ], profSkills:["athletics","intimidation"], tools:["none"], extraLanguage:0};
+var urchin = {name:"Urchin", speciality:["none"], profSkills:["sleightofhand","stealth"], tools:["Disguise kit","Thieves' tools"], extraLanguage:0};
+//var  = {name:"", speciality:[""], profSkills:[""], tools:[""], extraLanguage:};
+
+var backgroundList = [acolyte, charlatan, criminal, entertainer, folkhero, guildartisan, hermit, noble, outlander, sage, sailor, soldier, urchin];
 
 function RollClass() {
 	classRoll = classes[Math.floor((Math.random() *classes.length))];
@@ -121,6 +150,7 @@ function ResetStats() {
 	halfElf.namepool = RandomStatPriority(namePool[0], namePool[1]);
 	//console.log(halfElf.namepool);
 	document.getElementById('form102_1').innerHTML="";
+	extraLanguage = 0;
 	//paladin.primaryStat = RandomStatPriority("STR", "CHA");
 }
 
@@ -150,7 +180,7 @@ function RollName(gender){
 	firstName = maleOrFemale[Math.floor((Math.random() *maleOrFemale.length))];
 	lastName = surname[[Math.floor((Math.random() *surname.length))]];
 	document.getElementById("FDFXFA_PDFName").innerHTML = "CharSheet_"+firstName+""+lastName+".pdf";
-	console.log(firstName + " " + lastName);
+	//console.log(firstName + " " + lastName);
 	//console.log(race.namepool);
 }
 
@@ -163,8 +193,8 @@ function RollLanguages(){
 		languages.push(race.lang2);
 	}
 	
-	if(race.extraLanguage>0){
-		for(var i=0;i<race.extraLanguage;i++){
+	if(extraLanguage>0){
+		for(var i=0;i<extraLanguage;i++){
 			var newLang = langList[Math.floor((Math.random()*langList.length))];
 			if(languages.includes(newLang)){
 				console.log("They already know "+newLang+"!");
@@ -190,20 +220,22 @@ function InputProfLang() {
 			document.getElementById("form102_1").innerHTML += ", ";
 		}
 		else if(i==languages.length-1){
-			document.getElementById("form102_1").innerHTML += "\n\n";
+			document.getElementById("form102_1").innerHTML += ".\n\n";
 		}
 	}
 }
 
 function InputToolProfs() {
-	document.getElementById("form102_1").innerHTML += "Tools: \n";
-	for(var i=0;i<toolProfs.length;i++){
-		document.getElementById("form102_1").innerHTML += toolProfs[i];
-		if(i<toolProfs.length-1){
-			document.getElementById("form102_1").innerHTML += ", ";
-		}
-		else if(i==languages.length-1){
-			document.getElementById("form102_1").innerHTML += "\n\n";
+	if(toolProfs.length>0) {
+		document.getElementById("form102_1").innerHTML += "Tools: \n";
+		for(var i=0;i<toolProfs.length;i++){
+			document.getElementById("form102_1").innerHTML += toolProfs[i];
+			if(i<toolProfs.length-1){
+				document.getElementById("form102_1").innerHTML += ", ";
+			}
+			else if(i==languages.length-1){
+				document.getElementById("form102_1").innerHTML += ".\n\n";
+			}
 		}
 	}
 }
@@ -214,12 +246,11 @@ function RollRace() {
 	//console.log(race);
 	RollGender();
 	RollName(sex);
-	RollLanguages();
-	InputProfLang();
 	document.getElementById('form93_1').value=race.race;
 	document.getElementById('form94_1').value=classRoll.role+" 1";
 	document.getElementById('form95_1').value=firstName+" "+lastName;
 	raceBonus = race.ability;
+	extraLanguage += race.extraLanguage;
 }
 
 function RollAbility(){
@@ -266,9 +297,13 @@ function RollAbility(){
 	document.getElementById('form59_1').value = abilityModifier[3];		//INTMOD
 	document.getElementById('form63_1').value = abilityModifier[4];		//WISMOD
 	document.getElementById('form62_1').value = abilityModifier[5];		//CHAMOD
+	RollBackground();
 	RacialBonuses(race.race);
 	RollHitPoints();
 	RollSkills();
+	RollLanguages();
+	InputProfLang();
+	InputToolProfs();
 	document.getElementById('form69_1').value = 2; // PROFICIENCY
 	document.getElementById('form87_1').value += abilityModifier[1]; // INITIATIVE
 	
@@ -407,7 +442,7 @@ function Proficiencies(){
 	for(var i=0;i<classRoll.profCount;i++) {
 		var newProf = classRoll.profSkills[Math.floor((Math.random()*classRoll.profSkills.length))];
 		if(setProfs.includes(newProf)){
-			console.log("They already know "+newProf+"!");
+			//console.log("They already know "+newProf+"!");
 			i--;
 		}
 		else {
@@ -463,8 +498,9 @@ function RacialBonuses(racename){
 		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
 		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
 		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
-		toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
-		InputToolProfs();
+		LearnTool(tempTools);
+		//toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
+		//InputToolProfs();
 		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
 		//HILL DWARF STATS
 		document.getElementById('form105_1').value += "Dwarven Toughness. Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."+"\n\n";
@@ -476,8 +512,9 @@ function RacialBonuses(racename){
 		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
 		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
 		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
-		toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
-		InputToolProfs();
+		LearnTool(tempTools);
+		//toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
+		//InputToolProfs();
 		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
 		//MOUNTAIN DWARF STATS
 		document.getElementById('form105_1').value += "Dwarven Armor Training. You have proficiency with light and medium armor."+"\n\n";
@@ -561,14 +598,14 @@ function RacialBonuses(racename){
 		else if(t==3){
 			document.getElementById('form105_1').value+="Music Box. When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed."+"\n\n";
 		}
-		toolProfs.push("Artisan's Tools/Tinker's Tools");	
+		LearnTool(["Tinker's Tools"]);	
 	}
 	else if(racename=="Half-Elf") {
 		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
 		for(var i=0;i<2;i++) {
 			var newProf = bard.profSkills[Math.floor((Math.random()*bard.profSkills.length))];
 			if(setProfs.includes(newProf)){
-				console.log("They already know "+newProf+"!");
+				//console.log("They already know "+newProf+"!");
 				i--;
 			}
 			else {
@@ -588,5 +625,131 @@ function RacialBonuses(racename){
 	}
 	else {
 		console.log("Can't determine race");
+	}
+}
+
+function RollBackground() {
+	bg = backgroundList[Math.floor((Math.random()*backgroundList.length))];
+	//bg = backgroundList[0];
+	//console.log(bg);
+	document.getElementById('form89_1').value = bg.name;
+	if (bg.speciality!="none"){
+		bgSpec = bg.speciality[Math.floor((Math.random()*bg.speciality.length))];
+		document.getElementById('form89_1').value += " ("+bgSpec+")";
+	}
+	for(var i=0;i<bg.profSkills.length;i++) {
+		var newProf = bg.profSkills[i];
+		if(setProfs.includes(newProf)){
+			console.log("They already know "+newProf+"! (BG)");
+		}
+		else {
+			setProfs.push(newProf);
+		}
+	}
+	extraLanguage += bg.extraLanguage;
+	
+	if (bg.tools[0]=="none") {
+		
+	}
+	
+	if(bg.name == "Acolyte") {
+		//Only Equipment, part of which is randomized
+		document.getElementById('form104_1').innerHTML = ("A holy symbol (a gift to you when you entered the priesthood), a " + RandomizeEquipment(["prayer book","prayer wheel"]) + ", 5 sticks of incense, a set of common clothes, and a pouch containing 15 gp");
+	}
+	else if(bg.name=="Charlatan"){
+		//Only Equipment, part of which is randomized
+		document.getElementById('form104_1').innerHTML = ("A set of fine clothes, a disguise kit, " + RandomizeEquipment(["ten stoppered bottles filled with colored liquid"+"a set of weighted dice"+"a deck of marked cards"+"a signet ring of an imaginary duke"]) + " and a pouch containing 15 gp" );
+	}
+	else if(bg.name=="Criminal"){
+		//Random gaming set and predetermined equipment
+		LearnTool(gamesList);
+		document.getElementById('form104_1').innerHTML = ("A crowbar, a set of dark common clothes including a hoot, and a pouch containing 15 gp");
+	}
+	else if(bg.name=="Entertainment"){
+		//Random instrument and partly random equipment.
+		LearnTool(instrumentsList);
+		document.getElementById('form104_1').innerHTML = (lastTool+" "+RandomizeEquipment(["love letter","lock of hair","trinket"])+" from an admirer, a costume and a pouch containing 15 gp");
+	}
+	else if(bg.name=="Folk Hero"){
+		//random artisan's tools + vehicles (land) + random equipment
+		LearnTool(["Vehicles (land)"]);
+		LearnTool(toolsList);
+		document.getElementById('form104_1').innerHTML = ( lastTool+", a shovel, an iron pot, a set of common clothes, and a pouch containing 10 gp" );
+	}
+	else if(bg.name=="Guild Artisan"){
+		//random artisan's tools + equipment
+		LearnTool(toolsList);
+		document.getElementById('form104_1').innerHTML = ( lastTool+", a letter of introduction from your guild, a set of traveler's clothes, and a pouch containing 15 gp" );
+	}
+	else if(bg.name=="Hermit"){
+		//random equipment
+		document.getElementById('form104_1').innerHTML = ("A scroll case stuffed full of notes from your "+RandomizeEquipment(["prayers","studies"])+", a winter blanket, a set of common clothes, an herbalism kit, and 5 gp");
+	}
+	else if(bg.name=="Noble"){
+		//random gaming set + predetermined equipment
+		LearnTool(gamesList);
+		document.getElementById('form104_1').innerHTML = ("A set of fine clothes, a signet ring, a scroll of pedigree, and a purse containing 25 gp");
+	}
+	else if(bg.name=="Outlander"){
+		//musical instrument + equipment
+		LearnTool(instrumentsList);
+		document.getElementById('form104_1').innerHTML = ("A staff, a hunting trap, a trophy from an animal you killed, a set of traveler's clothes, and a pouch containing 10 gp");
+	}
+	else if(bg.name=="Sage"){
+		// only equipment
+		document.getElementById('form104_1').innerHTML = ("A bottle of black ink, a quill, a small knife, a letter from a dead colleague posing a question you have not yet been able toanswer, a set of common clothes, and a pouch containing 10 gp");
+	}
+	else if(bg.name=="Sailor"){
+		//vehicled (water) + random equipment
+		LearnTool(["Vehicles (water)"]);
+		document.getElementById('form104_1').innerHTML = ("A belaying pin (club), 50 feet of silk rope, "+RandomizeEquipment(["rabbit foot","a small stone with a hole in the center","a vial of dragon blood","an old key","an ornate scabbard that fits no blade you have found so far","a petrified mouse","a tiny sketch portrait of a goblin"])+", a set of common clothes, and a pouch containing 10 gp");
+	}
+	else if(bg.name=="Soldier"){
+		//gaming set and vehicles(land) as well as randomized equipment
+		LearnTool(["Vehicles (land)"]);
+		LearnTool(gamesList);
+		document.getElementById('form104_1').innerHTML = ("An insignia of rank, a "+RandomizeEquipment(["dagger","broken blade","piece of a banner"])+" from an enemy, a "+RandomizeEquipment(["set of bone dice","deck of cards"])+", a set of common clothes, and a pouch containing 10 gp");
+	}
+	else if(bg.name=="Urchin"){
+		//predetermined equipment
+		document.getElementById('form104_1').innerHTML = ("A small knife, a map of the city you grew up in, a pet mouse, a token to remember your parents by, a set of common clothes, and a pouch containing 10 gp");
+	}
+}
+
+function RandomizeEquipment(equipment) {
+	var rng = equipment[Math.floor((Math.random()*equipment.length))];
+	return rng;
+}
+
+function LearnTool(toolList) {
+	var toolFree = false;
+	for(var t=0;t<toolList.length;t++) {
+		if(toolProfs.includes(toolList[t])) {
+			console.log(toolList[t]+" already in list");
+		}
+		else if(!toolProfs.includes(toolList[t])) {
+			console.log("Not in list!");
+			toolFree = true;
+			/*for(var i=0;i==0;i) {
+				var rng = RandomizeEquipment(toolList);
+				if (!toolProfs.includes(rng)) {
+					toolProfs.push(rng);
+					i++;
+				}
+				console.log("Already proficient with "+rng);
+			}*/
+		}
+	}
+	if(toolFree==true) {
+		for(var i=0;i==0;i) {
+			var rng = RandomizeEquipment(toolList);
+			if (!toolProfs.includes(rng)) {
+				toolProfs.push(rng);
+				console.log(toolProfs);
+				lastTool = rng;
+				i++;
+			}
+			//console.log("Already proficient with "+rng);
+		}
 	}
 }
