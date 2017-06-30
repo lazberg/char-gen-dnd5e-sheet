@@ -1,3 +1,7 @@
+//SETTINGS
+var sDescription = true;
+
+//STATS
 var race = 0;
 var raceBonus = [0, 0, 0, 0, 0, 0];
 var firstName = "No";
@@ -15,6 +19,10 @@ var toolProfs = [];
 var lastTool = undefined;
 var bg = undefined;
 var bgSpec = undefined;
+var armorClass = 0;
+var cantrips = [];
+var firstLevel = [];
+var school = undefined;
 
 //LANGUAGE
 var langList = [ "Common", "Dwarvish", "Elvish", "Giant", "Gnomish", "Goblin", "Halfling", "Orc", "Abyssal", "Celestial", "Draconic", "Deep Speech", "Infernal", "Primordial", "Sylvan", "Undercommon" ];
@@ -137,6 +145,7 @@ var backgroundList = [acolyte, charlatan, criminal, entertainer, folkhero, guild
 
 function RollClass() {
 	classRoll = classes[Math.floor((Math.random() *classes.length))];
+	//classRoll = classes[2];
 }
 
 function ResetStats() {
@@ -147,11 +156,22 @@ function ResetStats() {
 	languages = [];
 	setProfs = [];
 	toolProfs = [];
+	cantrips = [];
+	firstLevel = [];
+	school = undefined;
 	halfElf.namepool = RandomStatPriority(namePool[0], namePool[1]);
 	//console.log(halfElf.namepool);
 	document.getElementById('form102_1').innerHTML="";
+	document.getElementById('form103_1').innerHTML="";
 	extraLanguage = 0;
+	armorClass = 0;
 	//paladin.primaryStat = RandomStatPriority("STR", "CHA");
+	if(document.getElementById("sDescription").checked) {
+		sDescription = true;
+	}
+	else if(!document.getElementById("sDescription").checked) {
+		sDescription = false;
+	}
 }
 
 function RandomStatPriority(stat1, stat2){
@@ -242,7 +262,7 @@ function InputToolProfs() {
 
 function RollRace() {
 	race = racials[Math.floor((Math.random() *racials.length))];
-	//race = racials[12];
+	//race = racials[5];
 	//console.log(race);
 	RollGender();
 	RollName(sex);
@@ -302,10 +322,12 @@ function RollAbility(){
 	RollHitPoints();
 	RollSkills();
 	RollLanguages();
+	ClassAbilities(classRoll.role);
 	InputProfLang();
 	InputToolProfs();
 	document.getElementById('form69_1').value = 2; // PROFICIENCY
 	document.getElementById('form87_1').value += abilityModifier[1]; // INITIATIVE
+	document.getElementById('form72_1').value = armorClass; // .. ARMOR CLASS
 	
 	DisableFields();
 }
@@ -490,81 +512,81 @@ function RacialBonuses(racename){
 		document.getElementById('form105_1').value = "";
 	}
 	else{
-		document.getElementById('form105_1').value = race.vision + "\n\n";
+		document.getElementById('form105_1').value = race.vision +CheckDesc("\n")+"\n";
 	}
 	
 	if(racename=="Hill Dwarf") {
 		//DRAWF STATS
-		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
-		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
+		document.getElementById('form105_1').value += "Dwarven Resilience. "+CheckDesc("You have advantage on saving throws against poison, and you have resistance against poison damage.\n")+ "\n";
+		document.getElementById('form105_1').value += "Dwarven Combat Training. "+CheckDesc("You have proficiency with the battleaxe, handaxe, light hammer, and warhammer.\n")+"\n";
 		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
 		LearnTool(tempTools);
 		//toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
 		//InputToolProfs();
-		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
+		document.getElementById('form105_1').value += "Stonecunning. "+CheckDesc("Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.\n")+"\n";
 		//HILL DWARF STATS
-		document.getElementById('form105_1').value += "Dwarven Toughness. Your hit point maximum increases by 1, and it increases by 1 every time you gain a level."+"\n\n";
+		document.getElementById('form105_1').value += "Dwarven Toughness. "+CheckDesc("Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.\n")+"\n";
 		
 	}
 	else if(racename=="Mountain Dwarf") {
 		//DRAWF STATS
 		//Dwarven Resilience
-		document.getElementById('form105_1').value += "Dwarven Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
-		document.getElementById('form105_1').value += "Dwarven Combat Training. You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."+"\n\n";
+		document.getElementById('form105_1').value += "Dwarven Resilience. "+CheckDesc("You have advantage on saving throws against poison, and you have resistance against poison damage.\n")+ "\n";
+		document.getElementById('form105_1').value += "Dwarven Combat Training. "+CheckDesc("You have proficiency with the battleaxe, handaxe, light hammer, and warhammer.\n")+"\n";
 		var tempTools = ["Smith's Tools", "Brewer's Supplies", "Mason's Tools"];
 		LearnTool(tempTools);
 		//toolProfs.push(tempTools[Math.floor((Math.random()*classRoll.profSkills.length))]);
 		//InputToolProfs();
-		document.getElementById('form105_1').value += "Stonecunning. Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus."+"\n\n";
+		document.getElementById('form105_1').value += "Stonecunning. "+CheckDesc("Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.\n")+"\n";
 		//MOUNTAIN DWARF STATS
-		document.getElementById('form105_1').value += "Dwarven Armor Training. You have proficiency with light and medium armor."+"\n\n";
+		document.getElementById('form105_1').value += "Dwarven Armor Training. "+CheckDesc("You have proficiency with light and medium armor.\n")+"\n";
 	}
 	else if(racename=="High Elf") {
 		//ELF STATS
-		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		document.getElementById('form105_1').value += "Keen Senses. "+CheckDesc("You have proficiency in the Perception skill.\n")+ "\n";
 		setProfs.push("perception");
-		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
-		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Fey Ancestry. "+CheckDesc("You have advantage on saving throws against being charmed, and magic can't put you to sleep.\n")+"\n";
+		document.getElementById('form105_1').value += "Trance. "+CheckDesc("For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep.\n")+"\n";
 		//HIGH ELF
-		document.getElementById('form105_1').value += "Elf Weapon Training. You have proficiency with the longsword, shortsword, shortbow, and longbow."+ "\n\n";
-		document.getElementById('form105_1').value += "Cantrip. You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it."+ "\n\n";
+		document.getElementById('form105_1').value += "Elf Weapon Training. "+CheckDesc("You have proficiency with the longsword, shortsword, shortbow, and longbow.\n")+ "\n";
+		document.getElementById('form105_1').value += "Cantrip. "+CheckDesc("You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it.\n")+ "\n";
 	}
 	else if(racename=="Wood Elf") {
 		//ELF STATS
-		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		document.getElementById('form105_1').value += "Keen Senses. "+CheckDesc("You have proficiency in the Perception skill.\n")+ "\n";
 		setProfs.push("perception");
-		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
-		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Fey Ancestry. "+CheckDesc("You have advantage on saving throws against being charmed, and magic can't put you to sleep.\n")+"\n";
+		document.getElementById('form105_1').value += "Trance. "+CheckDesc("For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep.\n")+"\n";
 		//WOOD ELF
-		document.getElementById('form105_1').value += "Elf Weapon Training. You have proficiency with the longsword, shortsword, shortbow, and longbow."+ "\n\n";
-		document.getElementById('form105_1').value += "Mask of the Wild. You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena."+ "\n\n";
+		document.getElementById('form105_1').value += "Elf Weapon Training. "+CheckDesc("You have proficiency with the longsword, shortsword, shortbow, and longbow.\n")+ "\n";
+		document.getElementById('form105_1').value += "Mask of the Wild. "+CheckDesc("You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.\n")+ "\n";
 	}
 	else if(racename=="Dark Elf (Drow)") {
 		//ELF STATS
-		document.getElementById('form105_1').value += "Keen Senses. You have proficiency in the Perception skill."+ "\n\n";
+		document.getElementById('form105_1').value += "Keen Senses. "+CheckDesc("You have proficiency in the Perception skill.\n")+ "\n";
 		setProfs.push("perception");
-		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
-		document.getElementById('form105_1').value += "Trance. For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Fey Ancestry. "+CheckDesc("You have advantage on saving throws against being charmed, and magic can't put you to sleep.\n")+"\n";
+		document.getElementById('form105_1').value += "Trance. "+CheckDesc("For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep.\n")+"\n";
 		//DARK ELF
-		document.getElementById('form105_1').value += "Sunlight Sensitivity. You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight."+ "\n\n";
-		document.getElementById('form105_1').value += "Drow Magic. You know the Dancing Lights cantrip."+ "\n\n";
-		document.getElementById('form105_1').value += "Drow Weapon Training. You have proficiency with rapiers, shortswords, and hand crossbows."+ "\n\n";		
+		document.getElementById('form105_1').value += "Sunlight Sensitivity. "+CheckDesc("You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.\n")+ "\n";
+		document.getElementById('form105_1').value += "Drow Magic. "+CheckDesc("You know the Dancing Lights cantrip.\n")+ "\n";
+		document.getElementById('form105_1').value += "Drow Weapon Training. "+CheckDesc("You have proficiency with rapiers, shortswords, and hand crossbows.\n")+ "\n";		
 	}
 	else if(racename=="Lightfoot Halfling") {
 		//HALFLING STATS
-		document.getElementById('form105_1').value += "Lucky. When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."+ "\n\n";
-		document.getElementById('form105_1').value += "Brave. You have advantage on saving throws against being frightened."+ "\n\n";
-		document.getElementById('form105_1').value += "Halfling Nimbleness. You can move through the space of any creature that is of a size larger than yours."+ "\n\n";
+		document.getElementById('form105_1').value += "Lucky. "+CheckDesc("When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.\n")+ "\n";
+		document.getElementById('form105_1').value += "Brave. "+CheckDesc("You have advantage on saving throws against being frightened.\n")+ "\n";
+		document.getElementById('form105_1').value += "Halfling Nimbleness. "+CheckDesc("You can move through the space of any creature that is of a size larger than yours.\n")+ "\n";
 		//LIGHTFOOT
-		document.getElementById('form105_1').value += "Naturally Stealthy. You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."+ "\n\n";
+		document.getElementById('form105_1').value += "Naturally Stealthy. "+CheckDesc("You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you.\n")+ "\n";
 	}
 	else if(racename=="Stout Halfling") {
 		//HALFLING STATS
-		document.getElementById('form105_1').value += "Lucky. When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."+ "\n\n";
-		document.getElementById('form105_1').value += "Brave. You have advantage on saving throws against being frightened."+ "\n\n";
-		document.getElementById('form105_1').value += "Halfling Nimbleness. You can move through the space of any creature that is of a size larger than yours."+ "\n\n";
+		document.getElementById('form105_1').value += "Lucky. "+CheckDesc("When you roll a 1 on a the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.\n")+ "\n";
+		document.getElementById('form105_1').value += "Brave. "+CheckDesc("You have advantage on saving throws against being frightened.\n")+ "\n";
+		document.getElementById('form105_1').value += "Halfling Nimbleness. "+CheckDesc("You can move through the space of any creature that is of a size larger than yours.\n")+ "\n";
 		//STOUT
-		document.getElementById('form105_1').value += "Stout Resilience. You have advantage on saving throws against poison, and you have resistance against poison damage."+ "\n\n";
+		document.getElementById('form105_1').value += "Stout Resilience. "+CheckDesc("You have advantage on saving throws against poison, and you have resistance against poison damage.\n")+ "\n";
 	}
 	else if(racename=="Human") {
 		//nothing...
@@ -572,36 +594,36 @@ function RacialBonuses(racename){
 	else if(racename=="Dragonborn") {
 		draconicAncestry = ancestry[Math.floor((Math.random()*ancestry.length))];
 		//DRAGONBORN STATS
-		document.getElementById('form105_1').value += "Draconic Ancestry. You have draconic ancestry of the "+draconicAncestry.dragon+" Dragons. ("+draconicAncestry.breath+" range and "+draconicAncestry.damage+" damage)"+ "\n\n";
-		document.getElementById('form105_1').value += "Breath Weapon. You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape and damage type of the exhalation. When you use your breath weapon, each creature in the area of the exhalation must make a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. ("+(8+abilityModifier[2]+2)+"). A creature takes 2d6 damage on a failed save, and half as much damage on a successful one."+ "\n\n";
-		document.getElementById('form105_1').value += "Damage Resistance. You have resistance to "+draconicAncestry.damage+"\n\n";
+		document.getElementById('form105_1').value += "Draconic Ancestry. "+CheckDesc("You have draconic ancestry of the ")+draconicAncestry.dragon+" Dragons. ("+draconicAncestry.breath+" range and "+draconicAncestry.damage+" damage)"+ "\n"+CheckDesc("\n");
+		document.getElementById('form105_1').value += "Breath Weapon. "+CheckDesc("You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape and damage type of the exhalation. When you use your breath weapon, each creature in the area of the exhalation must make a saving throw, the type of which is determined by your draconic ancestry. The DC for this saving throw equals 8 + your Constitution modifier + your proficiency bonus. ("+(8+abilityModifier[2]+2)+"). A creature takes 2d6 damage on a failed save, and half as much damage on a successful one.\n")+ "\n";
+		document.getElementById('form105_1').value += "Damage Resistance. "+CheckDesc("You have resistance to "+draconicAncestry.damage+"\n")+"\n";
 	}
 	else if(racename=="Forest Gnome") {
 		//GNOME STATS
-		document.getElementById('form105_1').value+="Gnome Cunning. You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic."+"\n\n";
+		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
 		//FOREST
-		document.getElementById('form105_1').value+="Natural Illusionist. You know the minor illusion cantrip. Intelligence is your spellcasting ability for it."+"\n\n";
+		document.getElementById('form105_1').value+="Natural Illusionist. "+CheckDesc("You know the minor illusion cantrip. Intelligence is your spellcasting ability for it.\n")+"\n";
 	}
 	else if(racename=="Rock Gnome") {
 		//GNOME STATS
-		document.getElementById('form105_1').value+="Gnome Cunning. You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic."+"\n\n";
+		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
 		//ROCK
-		document.getElementById('form105_1').value+="Artificer's Lore. Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply."+"\n\n";
-		document.getElementById('form105_1').value+="Tinker. Using your Tinker's Tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours, or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time."+"\n";
+		document.getElementById('form105_1').value+="Artificer's Lore. "+CheckDesc("Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply.\n")+"\n";
+		document.getElementById('form105_1').value+="Tinker. "+CheckDesc("Using your Tinker's Tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours, or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.")+"\n";
 		var t = Dice(3);
 		if(t==1){
-			document.getElementById('form105_1').value+="Clockwork Toy. This toy is a clockwork animal, monster, or person, such as a frog, mouse, bird, dragon, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noise as appropriate to the creature it represents."+"\n\n";
+			document.getElementById('form105_1').value+="Clockwork Toy. "+CheckDesc("This toy is a clockwork animal, monster, or person, such as a frog, mouse, bird, dragon, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noise as appropriate to the creature it represents.\n")+"\n";
 		}
 		else if(t==2){
-			document.getElementById('form105_1').value+="Fire Starter. The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action."+"\n\n";
+			document.getElementById('form105_1').value+="Fire Starter. "+CheckDesc("The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action.\n")+"\n";
 		}
 		else if(t==3){
-			document.getElementById('form105_1').value+="Music Box. When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed."+"\n\n";
+			document.getElementById('form105_1').value+="Music Box. "+CheckDesc("When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed.\n")+"\n";
 		}
 		LearnTool(["Tinker's Tools"]);	
 	}
 	else if(racename=="Half-Elf") {
-		document.getElementById('form105_1').value += "Fey Ancestry. You have advantage on saving throws against being charmed, and magic can't put you to sleep."+"\n\n";
+		document.getElementById('form105_1').value += "Fey Ancestry. "+CheckDesc("You have advantage on saving throws against being charmed, and magic can't put you to sleep.\n")+"\n";
 		for(var i=0;i<2;i++) {
 			var newProf = bard.profSkills[Math.floor((Math.random()*bard.profSkills.length))];
 			if(setProfs.includes(newProf)){
@@ -615,12 +637,12 @@ function RacialBonuses(racename){
 	}
 	else if(racename=="Half-Orc") {
 		setProfs.push("intimidation");
-		document.getElementById('form105_1').value += "Relentless Endurance. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit points instead. You can't use this feature again until you finish a long rest."+"\n\n";
-		document.getElementById('form105_1').value += "Savage Attacks. When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit."+"\n\n";
+		document.getElementById('form105_1').value += "Relentless Endurance. "+CheckDesc("When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit points instead. You can't use this feature again until you finish a long rest.\n")+"\n";
+		document.getElementById('form105_1').value += "Savage Attacks. "+CheckDesc("When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.\n")+"\n";
 	}
 	else if(racename=="Tiefling") {
-		document.getElementById('form105_1').value += "Hellish Resistance. You have resistance to fire damage."+"\n\n";
-		document.getElementById('form105_1').value += "Infernal Legacy. You know the thaumaturgy cantrip."+"\n\n";
+		document.getElementById('form105_1').value += "Hellish Resistance. "+CheckDesc("You have resistance to fire damage.\n")+"\n";
+		document.getElementById('form105_1').value += "Infernal Legacy. "+CheckDesc("You know the thaumaturgy cantrip.\n")+"\n";
 		
 	}
 	else {
@@ -654,36 +676,36 @@ function RollBackground() {
 	
 	if(bg.name == "Acolyte") {
 		//Only Equipment, part of which is randomized
-		document.getElementById('form104_1').innerHTML = ("A holy symbol (a gift to you when you entered the priesthood), a " + RandomizeEquipment(["prayer book","prayer wheel"]) + ", 5 sticks of incense, a set of common clothes, and a pouch containing 15 gp");
+		document.getElementById('form104_1').innerHTML = ("A holy symbol (a gift to you when you entered the priesthood), a " + RandomizeEquipment(["prayer book","prayer wheel"]) + ", 5 sticks of incense, a set of common clothes, and a pouch containing 15 gp\n\n");
 	}
 	else if(bg.name=="Charlatan"){
 		//Only Equipment, part of which is randomized
-		document.getElementById('form104_1').innerHTML = ("A set of fine clothes, a disguise kit, " + RandomizeEquipment(["ten stoppered bottles filled with colored liquid"+"a set of weighted dice"+"a deck of marked cards"+"a signet ring of an imaginary duke"]) + " and a pouch containing 15 gp" );
+		document.getElementById('form104_1').innerHTML = ("A set of fine clothes, a disguise kit, " + RandomizeEquipment(["ten stoppered bottles filled with colored liquid"+"a set of weighted dice"+"a deck of marked cards"+"a signet ring of an imaginary duke"]) + " and a pouch containing 15 gp\n\n" );
 	}
 	else if(bg.name=="Criminal"){
 		//Random gaming set and predetermined equipment
 		LearnTool(gamesList);
-		document.getElementById('form104_1').innerHTML = ("A crowbar, a set of dark common clothes including a hoot, and a pouch containing 15 gp");
+		document.getElementById('form104_1').innerHTML = ("A crowbar, a set of dark common clothes including a hoot, and a pouch containing 15 gp\n\n");
 	}
 	else if(bg.name=="Entertainment"){
 		//Random instrument and partly random equipment.
 		LearnTool(instrumentsList);
-		document.getElementById('form104_1').innerHTML = (lastTool+" "+RandomizeEquipment(["love letter","lock of hair","trinket"])+" from an admirer, a costume and a pouch containing 15 gp");
+		document.getElementById('form104_1').innerHTML = (lastTool+" "+RandomizeEquipment(["love letter","lock of hair","trinket"])+" from an admirer, a costume and a pouch containing 15 gp\n\n");
 	}
 	else if(bg.name=="Folk Hero"){
 		//random artisan's tools + vehicles (land) + random equipment
 		LearnTool(["Vehicles (land)"]);
 		LearnTool(toolsList);
-		document.getElementById('form104_1').innerHTML = ( lastTool+", a shovel, an iron pot, a set of common clothes, and a pouch containing 10 gp" );
+		document.getElementById('form104_1').innerHTML = ( lastTool+", a shovel, an iron pot, a set of common clothes, and a pouch containing 10 gp\n\n" );
 	}
 	else if(bg.name=="Guild Artisan"){
 		//random artisan's tools + equipment
 		LearnTool(toolsList);
-		document.getElementById('form104_1').innerHTML = ( lastTool+", a letter of introduction from your guild, a set of traveler's clothes, and a pouch containing 15 gp" );
+		document.getElementById('form104_1').innerHTML = ( lastTool+", a letter of introduction from your guild, a set of traveler's clothes, and a pouch containing 15 gp\n\n" );
 	}
 	else if(bg.name=="Hermit"){
 		//random equipment
-		document.getElementById('form104_1').innerHTML = ("A scroll case stuffed full of notes from your "+RandomizeEquipment(["prayers","studies"])+", a winter blanket, a set of common clothes, an herbalism kit, and 5 gp");
+		document.getElementById('form104_1').innerHTML = ("A scroll case stuffed full of notes from your "+RandomizeEquipment(["prayers","studies"])+", a winter blanket, a set of common clothes, an herbalism kit, and 5 gp\n\n");
 	}
 	else if(bg.name=="Noble"){
 		//random gaming set + predetermined equipment
@@ -693,26 +715,187 @@ function RollBackground() {
 	else if(bg.name=="Outlander"){
 		//musical instrument + equipment
 		LearnTool(instrumentsList);
-		document.getElementById('form104_1').innerHTML = ("A staff, a hunting trap, a trophy from an animal you killed, a set of traveler's clothes, and a pouch containing 10 gp");
+		document.getElementById('form104_1').innerHTML = ("A staff, a hunting trap, a trophy from an animal you killed, a set of traveler's clothes, and a pouch containing 10 gp\n\n");
 	}
 	else if(bg.name=="Sage"){
 		// only equipment
-		document.getElementById('form104_1').innerHTML = ("A bottle of black ink, a quill, a small knife, a letter from a dead colleague posing a question you have not yet been able toanswer, a set of common clothes, and a pouch containing 10 gp");
+		document.getElementById('form104_1').innerHTML = ("A bottle of black ink, a quill, a small knife, a letter from a dead colleague posing a question you have not yet been able toanswer, a set of common clothes, and a pouch containing 10 gp\n\n");
 	}
 	else if(bg.name=="Sailor"){
 		//vehicled (water) + random equipment
 		LearnTool(["Vehicles (water)"]);
-		document.getElementById('form104_1').innerHTML = ("A belaying pin (club), 50 feet of silk rope, "+RandomizeEquipment(["rabbit foot","a small stone with a hole in the center","a vial of dragon blood","an old key","an ornate scabbard that fits no blade you have found so far","a petrified mouse","a tiny sketch portrait of a goblin"])+", a set of common clothes, and a pouch containing 10 gp");
+		document.getElementById('form104_1').innerHTML = ("A belaying pin (club), 50 feet of silk rope, "+RandomizeEquipment(["rabbit foot","a small stone with a hole in the center","a vial of dragon blood","an old key","an ornate scabbard that fits no blade you have found so far","a petrified mouse","a tiny sketch portrait of a goblin"])+", a set of common clothes, and a pouch containing 10 gp\n\n");
 	}
 	else if(bg.name=="Soldier"){
 		//gaming set and vehicles(land) as well as randomized equipment
 		LearnTool(["Vehicles (land)"]);
 		LearnTool(gamesList);
-		document.getElementById('form104_1').innerHTML = ("An insignia of rank, a "+RandomizeEquipment(["dagger","broken blade","piece of a banner"])+" from an enemy, a "+RandomizeEquipment(["set of bone dice","deck of cards"])+", a set of common clothes, and a pouch containing 10 gp");
+		document.getElementById('form104_1').innerHTML = ("An insignia of rank, a "+RandomizeEquipment(["dagger","broken blade","piece of a banner"])+" from an enemy, a "+RandomizeEquipment(["set of bone dice","deck of cards"])+", a set of common clothes, and a pouch containing 10 gp\n\n");
 	}
 	else if(bg.name=="Urchin"){
 		//predetermined equipment
-		document.getElementById('form104_1').innerHTML = ("A small knife, a map of the city you grew up in, a pet mouse, a token to remember your parents by, a set of common clothes, and a pouch containing 10 gp");
+		document.getElementById('form104_1').innerHTML = ("A small knife, a map of the city you grew up in, a pet mouse, a token to remember your parents by, a set of common clothes, and a pouch containing 10 gp\n\n");
+	}
+}
+
+function DamageCalc(stat, tohit, prof) {
+	if (tohit==false) {
+		if (stat<0) {
+			return stat;
+		}
+		else {
+			return "+"+stat;
+		}
+	}
+	else if (tohit==true) {
+		if (prof==true) {
+			stat += 2;
+		}
+		if (stat<0) {
+			return stat;
+		}
+		else {
+			return "+"+stat;
+		}
+	}
+}
+
+function ClassAbilities(role) {
+	if(role=="Barbarian"){
+		//WEAPON 1
+		document.getElementById('form79_1').value = ("Greataxe");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		//WEAPON 2
+		document.getElementById('form78_1').value = ("Handaxe (2)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		//WEAPON 3
+		document.getElementById('form77_1').value = ("Javelin (4)");
+		document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		//ATTACKS AND SPELLCASTING
+		document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to bludgeoning, piercing and slashing damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
+		//FEATURES
+		document.getElementById('form105_1').value += "Unarmored Defense. "+CheckDesc("While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")+"\n";
+		//EQUIPMENT
+		document.getElementById('form104_1').innerHTML += ("An explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.");
+		//BARBARIAN STAT CHANGES
+		//Unarmored Defense
+		armorClass += (10+abilityModifier[1]+abilityModifier[2]);
+	}
+	else if(role=="Bard"){
+		//WEAPON 1
+		document.getElementById('form79_1').value = ("Rapier");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		//WEAPON 2
+		document.getElementById('form78_1').value = ("Dagger");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		//ATTACKS AND SPELLCASTING
+		var cantripSpells = [ "Blade Ward", "Dancing Lights", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Prestidigitation", "True Strike", "Vicious Mockery" ];
+		var levelSpells = [ "Animal Friendship", "Bane", "Charm Person", "Comprehend Languages", "Cure Wounds", "Detect Magic", "Disguise Self", "Dissonant Whispers", "Faerie Fire", "Feather Fall", "Healing Word", "Heroism", "Identify", "Illusory Script", "Longstrider", "Silent Image", "Sleep", "Speak with Animals", "Tasha's Hideous Laughter", "Thunderwave", "Unseen Servant" ];
+		
+		LearnSpell(cantripSpells, 2, 0);
+		LearnSpell(levelSpells, 4, 1);
+		document.getElementById('form103_1').innerHTML += "-- Cantrips\n";
+		for(var i=0;i<cantrips.length;i++){
+			document.getElementById('form103_1').innerHTML += cantrips[i];
+			if(i<(cantrips.length-1)) {
+				document.getElementById('form103_1').innerHTML += ",\n";
+			}
+		}
+		document.getElementById('form103_1').innerHTML += "\n\n"+"";
+		document.getElementById('form103_1').innerHTML += "-- 1st Level (2 slots)\n";
+		for(var i=0;i<firstLevel.length;i++){
+			document.getElementById('form103_1').innerHTML += firstLevel[i];
+			if(i<(firstLevel.length-1)) {
+				document.getElementById('form103_1').innerHTML += ",\n";
+			}
+		}
+		//FEATURES
+		document.getElementById('form105_1').value += "Bardic Inspiration (d6). "+CheckDesc("You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6. Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes.")+"\n";
+		//document.getElementById('form105_1').value += "Bardic Inspiration (d6). "+CheckDesc("")+"\n";
+		//EQUIPMENT
+		LearnTool(instrumentsList);
+		LearnTool(instrumentsList);
+		LearnTool(instrumentsList);
+		document.getElementById('form104_1').innerHTML += "Leather armor (11+Dex AC), a "+lastTool+", as well as "+RandomizeEquipment(["a diplomat's pack that includes a chest, 2 cases for maps and scrolls, a set of fine clothes, a bottle of ink, an ink pen, a lamp, 2 flasks of oil, 5 sheets of paper, a vial of perfume, sealing wax, and soap."],["an entertainer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit"]);
+		//
+		armorClass += (11+abilityModifier[1]);
+	}
+	else if(role=="Cleric"){
+		//Rolling Domain
+		school = RandomizeEquipment([ "Knowledge"/*, "Life", "Light", "Nature", "Tempest", "Trickery", "War" */]);
+		
+		if(school=="Knowledge") {
+			extraLanguage+=2;
+			var newProfs = ["arcana","history","nature","religion"];
+			var oldProfs = 0;
+			for(var i=0;i<newProfs.length;i++) {
+				if(setProfs.includes(newProfs[i])) {
+					console.log("nope "+oldProfs);
+					oldProfs++;
+				}
+			}
+			if(oldProfs<3) {
+				for(var i=0;i<2;i) {
+					var rng = RandomizeEquipment(["arcana","history","nature","religion"]);
+					if(!setProfs.includes(rng)) {
+						i++;
+					}
+				}
+			}
+		}
+		else if(school=="Life") {
+			
+		}
+		else if(school=="Light") {
+			
+		}
+		else if(school=="Nature") {
+			
+		}
+		else if(school=="Tempest") {
+			
+		}
+		else if(school=="Trickery") {
+			
+		}
+		else if(school=="War") {
+			
+		}
+	}
+	else if(role=="Druid"){
+		
+	}
+	else if(role=="Fighter"){
+		
+	}
+	else if(role=="Monk"){
+		
+	}
+	else if(role=="Paladin"){
+		
+	}
+	else if(role=="Ranger"){
+		
+	}
+	else if(role=="Rogue"){
+		
+	}
+	else if(role=="Sorcerer"){
+		
+	}
+	else if(role=="Warlock"){
+		
+	}
+	else if(role=="Wizard"){
+		
+	}
+	else {
+		console.log("What are you?");
 	}
 }
 
@@ -721,14 +904,38 @@ function RandomizeEquipment(equipment) {
 	return rng;
 }
 
+function LearnSpell(spells, amount, level) {
+	for(var i=0;i<amount;i++) {
+		var rng = RandomizeEquipment(spells);
+		if (level==0) {
+			if (cantrips.includes(rng)) {
+				console.log("Includes "+rng);
+				i--;
+			}
+			else if (!cantrips.includes(rng)) {
+				cantrips.push(rng);
+			}
+		}
+		else if (level==1) {
+			if (firstLevel.includes(rng)) {
+				console.log("Includes "+rng);
+				i--;
+			}
+			else if (!firstLevel.includes(rng)) {
+				firstLevel.push(rng);
+			}
+		}
+	}
+}
+
 function LearnTool(toolList) {
 	var toolFree = false;
 	for(var t=0;t<toolList.length;t++) {
 		if(toolProfs.includes(toolList[t])) {
-			console.log(toolList[t]+" already in list");
+			//console.log(toolList[t]+" already in list");
 		}
 		else if(!toolProfs.includes(toolList[t])) {
-			console.log("Not in list!");
+			//console.log("Not in list!");
 			toolFree = true;
 			/*for(var i=0;i==0;i) {
 				var rng = RandomizeEquipment(toolList);
@@ -745,11 +952,20 @@ function LearnTool(toolList) {
 			var rng = RandomizeEquipment(toolList);
 			if (!toolProfs.includes(rng)) {
 				toolProfs.push(rng);
-				console.log(toolProfs);
+				//console.log(toolProfs);
 				lastTool = rng;
 				i++;
 			}
 			//console.log("Already proficient with "+rng);
 		}
+	}
+}
+
+function CheckDesc(str) {
+	if(sDescription) {
+		return str;
+	}
+	else {
+		return "";
 	}
 }
