@@ -143,6 +143,41 @@ var urchin = {name:"Urchin", speciality:["none"], profSkills:["sleightofhand","s
 
 var backgroundList = [acolyte, charlatan, criminal, entertainer, folkhero, guildartisan, hermit, noble, outlander, sage, sailor, soldier, urchin];
 
+var persTraits = [
+	"I am always calm, no matter what the situation is. I never raise my voice or let my emotions control me.",
+	"Flattery is my preferred trick for getting what I want.",
+	"Nothing can shake my optimistic attitude.",
+	"I feel tremendous empathy for all who suffer.",
+	"I don't like to get my hands dirty, and I won't be caught dead in unsuitable accommodations.",
+	"I was, in fact, raised by wolves.",
+	"There is nothing I like more than a good mystery.",
+	"I like a job well done, especially if I can convince someone else to do it.",
+];
+var ideaTraits = [
+	"Destiny. Nothing and no one can steer me away from my higher calling.",
+	"Aspiration. I am determined to make something of myself.",
+	"Nation. My city, nation, or people are all that matter.",
+	"Glory. I must earn glory in battle, for myself and my people.",
+	"Family. Blood runs thicker than water.",
+	"Self-Knowledge. If you know yourself, there's nothing left to know.",
+];
+var bondTraits = [
+	"A powerful person killed someone I love. Some day soon, I'll have my revenge.",
+	"I want to be famous, whatever it takes.",
+	"I have a family, but I have no idea where they are. One day, I hope to see them again.",
+	"I suffer awful visions of a coming disaster and will do anything to prevent it.",
+	"I fight for those who cannot fight for themselves.",
+	"Somewhere out there, I have a child who doesn't know me. I'm making the world better from them.",
+];
+var flawTraits = [
+	"I judge others harshly, and myself even more severely.",
+	"I can't resist a pretty face.",
+	"If there's a plan, I'll forget it. If I don't forget it, I'll ignore it.",
+	"Despite my best efforts, I am unreliable to my friends.",
+	"I would kill to acquire a noble title.",
+	"I can't keep a secret to save my life, or anyone else's.",
+];
+
 function RollClass() {
 	classRoll = classes[Math.floor((Math.random() *classes.length))];
 	//classRoll = classes[2];
@@ -324,13 +359,22 @@ function RollAbility(){
 	RollLanguages();
 	ClassAbilities(classRoll.role);
 	RollHitPoints();
+	RollAlignment();
 	Proficiencies();
+	RollPersonality();
 	InputProfLang();
 	InputToolProfs();
 	document.getElementById('form69_1').value = 2; // PROFICIENCY
 	document.getElementById('form87_1').value += abilityModifier[1]; // INITIATIVE
 	document.getElementById('form72_1').value = armorClass; // .. ARMOR CLASS
-	
+	document.getElementById('form86_1').value = race.speed; // SPEED
+	if (setProfs.includes("perception")) {
+		document.getElementById('form70_1').value = 10+abilityModifier[4]+2;
+	}
+	else {
+		document.getElementById('form70_1').value = 10+abilityModifier[4];
+	}
+	document.getElementById('form92_1').value = 0;
 	DisableFields();
 }
 
@@ -1341,12 +1385,26 @@ function ClassAbilities(role) {
 		var cantripSpells = [ "Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike" ];
 		var levelSpells = [ "Alarm", "Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Find Familiar", "Fog Cloud", "Grease", "Identify", "Illusory Script", "Jump", "Longstrider", "Mage Armor", "Magic Missile", "Protection from Evil and Good", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Tasha's Hideous Sickness", "Tenser's Floating Disk", "Thunderwave", "Unseen Servant", "Witch Bolt" ];
 		var spellAmount = (1+abilityModifier[3]);
+		//WEAPON 1
+		var rng = Dice(2);
+		if (rng==1) {
+			document.getElementById('form79_1').value = ("Quarterstaff");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form76_1').value = ("1d6 (1d8)"+DamageCalc(abilityModifier[1], false, true)+" bludgeoning");
+		}
+		else if (rng==2) {
+			document.getElementById('form79_1').value = ("Dagger");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form76_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		}
 		
 		LearnSpell(cantripSpells, 3, 0);
 		LearnSpell(levelSpells, spellAmount, 1);
 		
 		document.getElementById('form105_1').value += "Arcane Recovery. "+CheckDesc(" Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher."+"\n")+"\n";
-		
+
+		document.getElementById('form104_1').innerHTML += (RandomizeEquipment(["A compononent pouch","An arcane focus"])+", a spellbook and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a scholar's pack which includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife."]));
+
 		InputSpellLists(2);
 		armorClass += 10+abilityModifier[1];
 	}
@@ -1490,6 +1548,25 @@ function LearnTool(toolList) {
 			//console.log("Already proficient with "+rng);
 		}
 	}
+}
+
+function RollAlignment() {
+	var morality = RandomizeEquipment(["Good", "Neutral", "Evil" ]);
+	var alignment = RandomizeEquipment(["Lawful", "Neutral", "Chaotic" ]);
+	if(morality == alignment) {
+		morality = "True";
+		document.getElementById('form90_1').value = morality + " " + alignment;
+	}
+	else {
+		document.getElementById('form90_1').value = alignment + " " + morality;
+	}
+}
+
+function RollPersonality() {
+	document.getElementById('form101_1').innerHTML = RandomizeEquipment(persTraits); // PERSONALITY TRAITS
+	document.getElementById('form100_1').innerHTML = RandomizeEquipment(bondTraits); // BONDS
+	document.getElementById('form99_1').innerHTML = RandomizeEquipment(ideaTraits); // IDEALS
+	document.getElementById('form98_1').innerHTML = RandomizeEquipment(flawTraits); // FLAWS
 }
 
 function CheckDesc(str) {
