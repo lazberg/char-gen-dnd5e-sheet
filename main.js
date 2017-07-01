@@ -71,7 +71,7 @@ var Female =
 var Surname = 
 var Names = [, ,];
 */
-
+//
 // RACES
 // ABILITIES: STR, DEX, CON, INT, WIS, CHA
 var hillDwarf = {race:"Hill Dwarf", ability:[0, 0, 2, 0, 1, 0], speed:25, namepool:dwarfNames, vision:"Darkvision", lang1:"Common", lang2:"Dwarvish", extraLanguage:0};
@@ -158,6 +158,7 @@ function ResetStats() {
 	toolProfs = [];
 	cantrips = [];
 	firstLevel = [];
+	hitPoints = 0;
 	school = undefined;
 	halfElf.namepool = RandomStatPriority(namePool[0], namePool[1]);
 	//console.log(halfElf.namepool);
@@ -247,7 +248,7 @@ function InputProfLang() {
 
 function InputToolProfs() {
 	if(toolProfs.length>0) {
-		document.getElementById("form102_1").innerHTML += "Tools: \n";
+		document.getElementById("form102_1").innerHTML += "Tools/Instruments: \n";
 		for(var i=0;i<toolProfs.length;i++){
 			document.getElementById("form102_1").innerHTML += toolProfs[i];
 			if(i<toolProfs.length-1){
@@ -319,10 +320,11 @@ function RollAbility(){
 	document.getElementById('form62_1').value = abilityModifier[5];		//CHAMOD
 	RollBackground();
 	RacialBonuses(race.race);
-	RollHitPoints();
 	RollSkills();
 	RollLanguages();
 	ClassAbilities(classRoll.role);
+	RollHitPoints();
+	Proficiencies();
 	InputProfLang();
 	InputToolProfs();
 	document.getElementById('form69_1').value = 2; // PROFICIENCY
@@ -411,7 +413,7 @@ function GetModifier(score) {
 }
 
 function RollHitPoints() {
-	hitPoints = classRoll.hitDice+abilityModifier[2];
+	hitPoints += classRoll.hitDice+abilityModifier[2];
 	
 	if(race.race=="Hill Dwarf"){
 		hitPoints++;
@@ -451,7 +453,6 @@ function RollSkills(){
 			skillAbility[j].value = abilityModifier[i];
 		}
 	}
-	Proficiencies();
 }
 
 function Proficiencies(){
@@ -506,7 +507,6 @@ function Proficiencies(){
 	}*/
 }
 
-
 function RacialBonuses(racename){
 	if(race.vision=="none"){
 		document.getElementById('form105_1').value = "";
@@ -548,6 +548,8 @@ function RacialBonuses(racename){
 		document.getElementById('form105_1').value += "Fey Ancestry. "+CheckDesc("You have advantage on saving throws against being charmed, and magic can't put you to sleep.\n")+"\n";
 		document.getElementById('form105_1').value += "Trance. "+CheckDesc("For 4 hours a day, you can go into a deep meditation, remaining semiconscious. This gives you the same benefit that a human does from 8 hours of sleep.\n")+"\n";
 		//HIGH ELF
+		var cantripSpells = [ "Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike" ];
+		LearnSpell(cantripSpells, 1, 0);
 		document.getElementById('form105_1').value += "Elf Weapon Training. "+CheckDesc("You have proficiency with the longsword, shortsword, shortbow, and longbow.\n")+ "\n";
 		document.getElementById('form105_1').value += "Cantrip. "+CheckDesc("You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it.\n")+ "\n";
 	}
@@ -570,6 +572,7 @@ function RacialBonuses(racename){
 		//DARK ELF
 		document.getElementById('form105_1').value += "Sunlight Sensitivity. "+CheckDesc("You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.\n")+ "\n";
 		document.getElementById('form105_1').value += "Drow Magic. "+CheckDesc("You know the Dancing Lights cantrip.\n")+ "\n";
+		LearnSpell(["Dancing Lights"],1,0);
 		document.getElementById('form105_1').value += "Drow Weapon Training. "+CheckDesc("You have proficiency with rapiers, shortswords, and hand crossbows.\n")+ "\n";		
 	}
 	else if(racename=="Lightfoot Halfling") {
@@ -600,13 +603,15 @@ function RacialBonuses(racename){
 	}
 	else if(racename=="Forest Gnome") {
 		//GNOME STATS
-		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
+		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
 		//FOREST
 		document.getElementById('form105_1').value+="Natural Illusionist. "+CheckDesc("You know the minor illusion cantrip. Intelligence is your spellcasting ability for it.\n")+"\n";
+		LearnSpell(["Minor Illusion"],1,0);
+		document.getElementById('form105_1').value+="Speak with Small Beasts. "+CheckDesc("Through sounds and gestures, you can communicate simple ideas with Small or smaller beasts.\n")+"\n";
 	}
 	else if(racename=="Rock Gnome") {
 		//GNOME STATS
-		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have disadvantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
+		document.getElementById('form105_1').value+="Gnome Cunning. "+CheckDesc("You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.\n")+"\n";
 		//ROCK
 		document.getElementById('form105_1').value+="Artificer's Lore. "+CheckDesc("Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply.\n")+"\n";
 		document.getElementById('form105_1').value+="Tinker. "+CheckDesc("Using your Tinker's Tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours, or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.")+"\n";
@@ -643,6 +648,7 @@ function RacialBonuses(racename){
 	else if(racename=="Tiefling") {
 		document.getElementById('form105_1').value += "Hellish Resistance. "+CheckDesc("You have resistance to fire damage.\n")+"\n";
 		document.getElementById('form105_1').value += "Infernal Legacy. "+CheckDesc("You know the thaumaturgy cantrip.\n")+"\n";
+		LearnSpell(["Thaumaturgy"],1,0);
 		
 	}
 	else {
@@ -760,6 +766,29 @@ function DamageCalc(stat, tohit, prof) {
 	}
 }
 
+function InputSpellLists(daily) {
+	if(cantrips.length>0) {
+		document.getElementById('form103_1').innerHTML += "-- Cantrips\n";
+		for(var i=0;i<cantrips.length;i++){
+			document.getElementById('form103_1').innerHTML += cantrips[i];
+			if(i<(cantrips.length-1)) {
+				document.getElementById('form103_1').innerHTML += ",\n";
+			}
+		}
+	}
+	
+	if(firstLevel.length>0) {
+		document.getElementById('form103_1').innerHTML += "\n\n"+"";
+		document.getElementById('form103_1').innerHTML += "-- 1st Level ("+daily+" daily)\n";
+		for(var i=0;i<firstLevel.length;i++){
+			document.getElementById('form103_1').innerHTML += firstLevel[i];
+			if(i<(firstLevel.length-1)) {
+				document.getElementById('form103_1').innerHTML += ",\n";
+			}
+		}
+	}
+}
+
 function ClassAbilities(role) {
 	if(role=="Barbarian"){
 		//WEAPON 1
@@ -783,6 +812,7 @@ function ClassAbilities(role) {
 		//BARBARIAN STAT CHANGES
 		//Unarmored Defense
 		armorClass += (10+abilityModifier[1]+abilityModifier[2]);
+		InputSpellLists(2);
 	}
 	else if(role=="Bard"){
 		//WEAPON 1
@@ -799,21 +829,7 @@ function ClassAbilities(role) {
 		
 		LearnSpell(cantripSpells, 2, 0);
 		LearnSpell(levelSpells, 4, 1);
-		document.getElementById('form103_1').innerHTML += "-- Cantrips\n";
-		for(var i=0;i<cantrips.length;i++){
-			document.getElementById('form103_1').innerHTML += cantrips[i];
-			if(i<(cantrips.length-1)) {
-				document.getElementById('form103_1').innerHTML += ",\n";
-			}
-		}
-		document.getElementById('form103_1').innerHTML += "\n\n"+"";
-		document.getElementById('form103_1').innerHTML += "-- 1st Level (2 slots)\n";
-		for(var i=0;i<firstLevel.length;i++){
-			document.getElementById('form103_1').innerHTML += firstLevel[i];
-			if(i<(firstLevel.length-1)) {
-				document.getElementById('form103_1').innerHTML += ",\n";
-			}
-		}
+		InputSpellLists(2);
 		//FEATURES
 		document.getElementById('form105_1').value += "Bardic Inspiration (d6). "+CheckDesc("You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6. Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes.")+"\n";
 		//document.getElementById('form105_1').value += "Bardic Inspiration (d6). "+CheckDesc("")+"\n";
@@ -827,10 +843,15 @@ function ClassAbilities(role) {
 	}
 	else if(role=="Cleric"){
 		//Rolling Domain
-		school = RandomizeEquipment([ "Knowledge"/*, "Life", "Light", "Nature", "Tempest", "Trickery", "War" */]);
-		
+		school = RandomizeEquipment([ "Knowledge", "Life", "Light", "Nature", "Tempest", "Trickery", "War"]);
+		var spellSlots = abilityModifier[4]+1;
+		var cantripSpells = [ "Guidance", "Light", "Mending", "Resistance", "Sacred Flame", "Spare the Dying", "Thaumaturgy" ];
+		var levelSpells = [ "Bane", "Bless", "Command", "Create or Destroy Water", "Cure Wounds", "Detect Evil and Good", "Detect Magic", "Detect Poison and Disease", "Guiding Bolt", "Healing Word", "Inflict Wounds", "Protection from Evil and Good", "Purify Food and Drink", "Sanctuary", "Shield of Faith" ];
+		var classProfs = [];
 		if(school=="Knowledge") {
 			extraLanguage+=2;
+			firstLevel.push("Command (Domain)","Identify (Domain)");
+			levelSpells.splice(3,1);
 			var newProfs = ["arcana","history","nature","religion"];
 			var oldProfs = 0;
 			for(var i=0;i<newProfs.length;i++) {
@@ -843,60 +864,556 @@ function ClassAbilities(role) {
 				for(var i=0;i<2;i) {
 					var rng = RandomizeEquipment(["arcana","history","nature","religion"]);
 					if(!setProfs.includes(rng)) {
+						setProfs.push(rng);
+						classProfs.push(rng);
 						i++;
 					}
 				}
 			}
+			ClericEquipment(false, false, school);
+			document.getElementById('form105_1').value += "Blessings of Knowledge. "+CheckDesc("Your proficiency bonus made with "+classProfs[0]+" and "+classProfs[1]+" are doubled for any ability check you make that uses either of those skills."+"\n")+"\n";
 		}
 		else if(school=="Life") {
-			
+			firstLevel.push("Bless (Domain)","Cure Wounds (Domain)");
+			levelSpells.splice(5,1);
+			levelSpells.splice(2,1);			
+			ClericEquipment(true, false, school);
+			document.getElementById('form105_1').value += "Disciple of Life. "+CheckDesc("Your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level."+"\n")+"\n";
 		}
 		else if(school=="Light") {
-			
+			firstLevel.push("Burning Hands (Domain)","Faerie Fire (Domain)");
+			if (!cantrips.includes("Light")){
+				cantrips.push("Light");
+			}		
+			ClericEquipment(false, false, school);
+			document.getElementById('form105_1').value += "Warding Flare. "+CheckDesc("You can interpose divine light between yourself and an attacking enemy. When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing light to flare before the attacker before it hits or misses. An attacker that can't be blinded is immune to this feature. You can use this feature "+abilityModifier[4]+" times between each long rest."+"\n")+"\n";
 		}
 		else if(school=="Nature") {
-			
+			var druidCantrips=[ "Druidcraft", "Guidance", "Mending", "Poison Spray", "Produce Flame", "Resistance", "Shillelagh", "Thorn Whip" ];
+			firstLevel.push("Animal Friendship (Domain)","Speak with Animals (Domain)");
+			LearnSpell(druidCantrips,1,0);
+			var newProfs = ["animalhandling","nature","survival"];
+			var oldProfs = 0;
+			for(var i=0;i<newProfs.length;i++) {
+				if(setProfs.includes(newProfs[i])) {
+					console.log("nope "+oldProfs);
+					oldProfs++;
+				}
+			}
+			if(oldProfs<3) {
+				for(var i=0;i<2;i) {
+					var rng = RandomizeEquipment(["arcana","history","nature","religion"]);
+					if(!setProfs.includes(rng)) {
+						setProfs.push(rng);
+						classProfs.push(rng);
+						i++;
+					}
+				}
+			}
+			document.getElementById('form105_1').value += "Acolyte of Nature. "+CheckDesc("You learn one druid cantrip of your choice.\n")+"\n";
+			ClericEquipment(true, false, school);
+			//document.getElementById('form105_1').value += "Acolyte of Nature. "+CheckDesc(""+"\n")+"\n";
 		}
 		else if(school=="Tempest") {
-			
+			firstLevel.push("Fog Cloud (Domain)","Thunderwave (Domain)");
+			document.getElementById('form105_1').value += "Wrath of the Storm. "+CheckDesc("You can thunderously rebuke attackers. When a creature within 5 feet of you that you can see hits you with an attack, you can use your reaction to cause the creature to make a Dexterity saving throw. The creature takes 2d8 lightning or thunder damage (your choice) on a failed saving throw, and half as much damage on a successful one. You can use this feature "+abilityModifier[4]+" times between each long rest."+"\n")+"\n";
+			ClericEquipment(true, true, school);
 		}
 		else if(school=="Trickery") {
-			
+			firstLevel.push("Charm Person (Domain)","Disguise Self (Domain)");
+			document.getElementById('form105_1').value += "Blessing of the Trickster. "+CheckDesc("You can use your action to touch a willing creature other than yourself to give it advantage on Dexterity (Stealth) checks. This blessing lasts for 1 hour or until you use this feature again."+"\n")+"\n";
+			ClericEquipment(false, false, school);
 		}
 		else if(school=="War") {
-			
+			firstLevel.push("Divine Favor (Domain)","Shield of Faith (Domain)");
+			levelSpells.splice(14,1);
+			ClericEquipment(true, true, school);
+			document.getElementById('form105_1').value += "War Priest. "+CheckDesc("Your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action. You can use this feature "+abilityModifier[4]+" times between each long rest."+"\n")+"\n";
 		}
+		LearnSpell(cantripSpells, 3, 0);
+		LearnSpell(levelSpells, spellSlots, 1);
+		InputSpellLists(2);
 	}
 	else if(role=="Druid"){
+		var cantripSpells = [ "Druidcraft", "Guidance", "Mending", "Poison Spray", "Produce Flame", "Resistance", "Shillelagh", "Thorn Whip" ];
+		var levelSpells = [ "Animal Friendship", "Charm Person", "Create or Destroy Water", "Cure Wounds", "Detect Magic", "Detect Poison and Disease", "Entangle", "Faerie Fire", "Fog Cloud", "Goodberry", "Healing Word", "Jump", "Longstrider", "Purify Food and Drink", "Speak with Animals", "Thunderwave" ];
+
+		//WEAPON 1
+		document.getElementById('form79_1').value = ("Scimitar");
+		if(abilityModifier[0]>=abilityModifier[1]){
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		}
+		else if(abilityModifier[0]<abilityModifier[1]){
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" slashing");
+		}
+		//EQUIPMENT
+		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX), a wooden shield (+2 AC), a druidic focus and "+"an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.");
+		languages.push("Druidic");
+		if (!toolProfs.includes("Herbalism kit")) {
+			LearnTool(["Herbalism kit"]);
+		}
+		LearnSpell(cantripSpells, 2, 0);
+		LearnSpell(levelSpells, 2, 1);
 		
+		InputSpellLists(1);
 	}
 	else if(role=="Fighter"){
+		school = RandomizeEquipment([ "Archery", "Defense", "Dueling", "Great Weapon Fighting", "Protection", "Two-Weapon Fighting" ]);
+		var armorType = undefined;
+		//WEAPON 1
+		var rng = Dice(2);
+		if (rng == 1) {
+			document.getElementById('form79_1').value = ("Longbow (20)");
+			if (school == "Archery") {
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1]+2, true, true));
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			}
+			else {
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			}
+			armorType = "Leather armor (11+DEX)";
+			armorClass = 11+abilityModifier[1];
+		}
+		else if (rng == 2) {
+			armorType = "Scale mail (14+DEX(MAX2))";
+			if (abilityModifier[1]<=2) {
+				armorClass += 14+abilityModifier[1];
+			}
+			else {
+				armorClass += 14+2;
+			}
+		}
+		rng = Dice(2);
+		if (rng == 1) {
+			document.getElementById('form78_1').value = ("L. Crossbow (20)");
+			if (school == "Archery") {
+				document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1]+2, true, true));
+				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			}
+			else {
+				document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			}
+		}
+		else if (rng == 2) {
+			document.getElementById('form78_1').value = ("Handaxe (2)");
+			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		}
+		rng = Dice(2);
+		if (rng == 1) {
+			//martial wep and shield?
+			rng = Dice(4);
+			if (rng == 1) {
+				document.getElementById('form77_1').value = ("Flail");
+				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form74_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			}
+			else if (rng == 2) {
+				document.getElementById('form77_1').value = ("Maul");
+				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form74_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			}
+			else if (rng == 3) {
+				document.getElementById('form77_1').value = ("Longsword");
+				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form74_1').value = ("1d8 (1d10)"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+			}
+			else if (rng ==4) {
+				document.getElementById('form77_1').value = ("Shortsword");
+				if(abilityModifier[0]>=abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+				}
+				else if(abilityModifier[0]<abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
+				}
+				
+				if (school=="Dueling") {
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc((abilityModifier[0]+2), false, true)+" piercing");
+				}
+				else {
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+				}
+			}
+			armorType += ", a shield (+2 AC)";
+			armorClass += 2;
+		}
+		else if (rng == 2) {
+			rng = Dice(2);
+			if (rng == 1) {
+				document.getElementById('form77_1').value = ("Shortsword (2)");
+				if(abilityModifier[0]>=abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+				}
+				else if(abilityModifier[0]<abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+				}
+			}
+			else if (rng == 2) {
+				document.getElementById('form77_1').value = ("Scimitar (2)");
+				if(abilityModifier[0]>=abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+				}
+				else if(abilityModifier[0]<abilityModifier[1]){
+					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" slashing");
+				}
+			}
+			
+		}
+		document.getElementById('form104_1').innerHTML += (armorType+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 		
+		if (school=="Archery") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("You gain a +2 bonus to attack rolls you make with ranged weapons.")+"\n";
+		}
+		else if (school=="Defense") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("While you are wearing armor, you gain a +1 bonus to AC.")+"\n";
+			armorClass+=1;
+		}
+		else if (school=="Dueling") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.")+"\n";
+		}
+		else if (school=="Great Weapon Fighting") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit.")+"\n";
+		}
+		else if (school=="Protection") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield.")+"\n";
+		}
+		else if (school=="Two-Weapon Fighting") {
+			document.getElementById('form105_1').value += "Fighting Style ("+school+") "+CheckDesc("When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.")+"\n";
+		}
+		document.getElementById('form105_1').value += "Second Wind. "+CheckDesc("On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."+"\n")+"\n";
+
+		//document.getElementById('form105_1').value += "Second Wind. "+CheckDesc("")+"\n";
 	}
 	else if(role=="Monk"){
+		var rng = Dice(2);
+		if(rng == 1) {
+			LearnTool(instrumentsList);
+		}
+		else if(rng == 2) {
+			LearnTool(toolsList);
+		}
+		//WEAPON 1
+		document.getElementById('form79_1').value = ("Shortsword");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		//WEAPON 2
+		document.getElementById('form78_1').value = ("Dart (10)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		//WEAPON 3
+		document.getElementById('form77_1').value = ("Fist");
+		document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form74_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
 		
+		document.getElementById('form105_1').value += "Martial Arts. "+CheckDesc("Your practice of martial arts gives you mastery of combat styles that use unarmed strikes, and monk weapons, which are shortswords and any simple melee weapon that don't have the two-handed or heavy property. You gain the following benefits while you are unarmed or wielding only monk weapons and you aren't wearing armor or wielding a shield: You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes and monk weapons. You can roll a d4 in place of the normal damage of your unarmed strike or monk weapon. This die changes as you gain monk levels. When you use the attack action with an unarmed strike or a monk weapon on your turn, you can make one unarmed strike as a bonus action.")+"\n";
+		
+		document.getElementById('form105_1').value += "Unarmored Defense. "+CheckDesc("While you are wearing no armor and not wielding a shield, your AC equals 10 + your Dexterity modifier + your Wisdom modifier.")+"\n";
+		armorClass += 10+abilityModifier[1]+abilityModifier[4];
+		InputSpellLists(1);
 	}
 	else if(role=="Paladin"){
 		
+		var armorType = "Chain mail (16)";
+		
+		rng = Dice(2);
+		if (rng == 1) {
+			//martial wep and shield?
+			rng = Dice(4);
+			if (rng == 1) {
+				document.getElementById('form79_1').value = ("Flail");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			}
+			else if (rng == 2) {
+				document.getElementById('form79_1').value = ("Maul");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			}
+			else if (rng == 3) {
+				document.getElementById('form79_1').value = ("Longsword");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("1d8 (1d10)"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+			}
+			else if (rng ==4) {
+				document.getElementById('form79_1').value = ("Shortsword");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+			}
+			armorType += ", a shield (+2 AC)";
+			armorClass += 2;
+		}
+		else if (rng == 2) {
+			rng = Dice(2);
+			if (rng == 1) {
+				document.getElementById('form79_1').value = ("Shortsword (2)");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+			}
+			else if (rng == 2) {
+				document.getElementById('form79_1').value = ("Scimitar (2)");
+				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+			}
+			
+		}
+		//WEAPON 2
+		document.getElementById('form78_1').value = ("Javelins (5)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		
+		if(abilityModifier[0]>=13) {
+			armorClass += 16;
+		}
+		document.getElementById('form105_1').value += "Divine Sense. "+CheckDesc("As an action, you can open your awareness to detect forces. Until the end of your next turn, you know the location of any celestial, fiend, or undead within 60 feet of you that is not behind total cover. You know the type of any being whose presence you sense, but not its identity. You can use this feature "+(1+abilityModifier[1])+" times between each long rest.")+"\n";
+
+		document.getElementById('form105_1').value += "Second Wind. "+CheckDesc("Your blessed touch can heal wounds. You have a pool of healing power that replenishes when you take a long rest. With that pool, you can restore a total number of hit points equal to your paladin level x 5 (5). As an action, you can touch a creature and draw power from the pool to restore a number of hit points to that creature, up to the maximum amount remaining in your pool. Alternatively, you can expend 5 hit points from your pool of healing to cure the target of one disease of neutralize one poison affecting it. This feature has no effect on undead and constructs.")+"\n";
+
+		document.getElementById('form104_1').innerHTML += (armorType +" a holy symbol, "+RandomizeEquipment(["a priest's pack including a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin."],["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."]));
+		
+		InputSpellLists(1);
 	}
 	else if(role=="Ranger"){
+		var armorType = undefined;
+		var rng = Dice(2);
 		
+		var enemyList = [ {name:"aberrations",lang:"none"}, {name:"beasts",lang:"none"}, {name:"celestials",lang:"Celestial"}, {name:"constructs",lang:"none"}, {name:"dragons",lang:"Draconic"}, {name:"elementals",lang:"Primordial"}, {name:"fey",lang:"Sylvan"}, {name:"fiends",lang:"none"}, {name:"giants",lang:"Giant"}, {name:"monstrosities",lang:"none"}, {name:"oozes",lang:"none"}, {name:"plants",lang:"none"}, {name:"undead",lang:"none"} ];
+		var terrainList = [ "arctic", "coast", "desert", "forest", "grassland", "mountain", "swamp", "the Underdark" ];
+		
+		var favoredEnemy = RandomizeEquipment(enemyList);
+		var naturalExplorer = RandomizeEquipment(terrainList);
+		
+		if(favoredEnemy.lang!="none") {
+			if(!languages.includes(favoredEnemy.lang)) {
+				languages.push(favoredEnemy.lang);
+			}
+		}
+		
+		document.getElementById('form105_1').value += "Favoured Enemy ("+favoredEnemy.name+"). "+CheckDesc("You have advantage on Wisdom(Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.")+"\n";
+		document.getElementById('form105_1').value += "Natural Explored ("+naturalExplorer+"). "+CheckDesc("When you make an Intelligence or Widsom check related to your favored terrain, your proficiency bonus is doubled if you are using a skill that you are proficient in. While traveling for an hour or more in your favored terrain, you gain the following benefits: Difficult terrain doesn't slow your group's travel. Your group can't become lost except by magical means. Even when you are engaged in another activity while traveling such as foraging, navigating, or tracking, you remain alert to danger. If you are traveling alone, you can move stealthily at a normal pace. When you forage, you find twice as much food as you normally would. While tracking other creatures, you also learn their exact number, their sizes, and how long ago they passed through the area.")+"\n";
+
+		if (rng == 1) {
+			armorType = "Scale mail (14+DEX(MAX2))";
+			if (abilityModifier[1]<=2) {
+				armorClass += 14+abilityModifier[1];
+			}
+			else {
+				armorClass += 14+2;
+			}
+		}
+		else if (rng == 2) {
+			armorType = "Leather armor (11+DEX)";
+			armorClass += 11+abilityModifier[1];
+		}
+		//WEAPON 1
+		document.getElementById('form79_1').value = ("Shortsword (2)");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		//WEAPON 2
+		document.getElementById('form78_1').value = ("Longbow (20)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+
+		document.getElementById('form104_1').innerHTML += (armorType+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
+
+		InputSpellLists(1);
 	}
 	else if(role=="Rogue"){
+		languages.push("Thieves' Cant");
+		LearnTool(["Thieves' Tools"]);
+		//WEAPON 1
+		var rng = Dice(2);
+		if (rng==1) {
+			document.getElementById('form79_1').value = ("Shortsword");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		}
+		else if (rng==2) {
+			document.getElementById('form79_1').value = ("Rapier");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		}
+		rng = Dice(2);
+		if (rng==1) {
+			document.getElementById('form78_1').value = ("Shortsword");
+			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		}
+		else if (rng==2) {
+			document.getElementById('form78_1').value = ("Shortbow (20)");
+			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		}
+		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX), and "+RandomizeEquipment(["a burglar's pack, which include a backpack, a bag of 1000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of  oil, 5 days rations, a tinderbox, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."],["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
+
+		document.getElementById('form105_1').value += "Expertise. "+CheckDesc("Choose two of your skill proficiencies, or one of your skill proficiencies and your proficiency with thieves' tools. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies."+"\n")+"\n";
 		
+		document.getElementById('form105_1').value += "Sneak Attack (1d6). "+CheckDesc("Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon. You don't need advantage on the attack roll if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll."+"\n")+"\n";
+		//document.getElementById('form105_1').value += "Expertise. "+CheckDesc(""+"\n")+"\n";
+		InputSpellLists(1);
 	}
 	else if(role=="Sorcerer"){
+		var dragonBlood = RandomizeEquipment(ancestry);
+		// WEAPON 1
+		document.getElementById('form79_1').value = ("L. Crossbow (20)");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		// WEAPON 2
+		document.getElementById('form78_1').value = ("Dagger (2)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
 		
+		document.getElementById('form104_1').innerHTML += (RandomizeEquipment(["A compononent pouch","An arcane focus"])+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
+
+		school = RandomizeEquipment(["Draconic Bloodline"],["Wild Magic"]);
+		
+		if (school=="Wild Magic") {
+			document.getElementById('form105_1').value += "Wild Magic Surge. "+CheckDesc("Once per turn, the DM can have you roll a d20 immediately after you cast a sorcerer spell of 1st level or higher. If you roll a 1, roll on the Wild Magic Surge table to create a magical effect."+"\n")+"\n";
+			document.getElementById('form105_1').value += "Tides of Chaos. "+CheckDesc("You can manipulate the forces of chance and chaos to gain advantage on one attack roll, ability check, or saving throw. Once you do so, you must finish a long rest before you can use this feature again. Any time before you regain the use of this feature, the DM can have you roll on the Wild Magic Surge table immediately after you cast a sorcerer spell of 1st level or higher. You then regain the use of this feature."+"\n")+"\n";
+		}
+		else if (school=="Draconic Bloodline") {
+			if (!languages.includes("Draconic")) {
+				languages.push("Draconic");
+			}
+			hitPoints++;
+			
+			document.getElementById('form105_1').value += "Dragon Ancestor ("+dragonBlood.dragon+" descent, "+dragonBlood.damage+" damage). "+CheckDesc("Whenever you make a Charisma check when interacting with dragons, your proficiency bonus is doubled if it applies to the check."+"\n")+"\n";
+			
+			document.getElementById('form105_1').value += "Draconic Resilience. "+CheckDesc("At 1st level, your hit point maximum increases by 1 and increases by 1 again whenever you gain a level in this class. Additionally, parts of your skin are covered by a thin sheen of dragon-like scales. When you aren't wearing armor, your AC equals 13 + your Dexterity modifier."+"\n")+"\n";
+			armorClass+=(13+abilityModifiers[1]);
+		}
+		InputSpellLists(1);
 	}
 	else if(role=="Warlock"){
+		var cantripSpells = [ "Blade Ward", "Chill Touch", "Eldritch Blast", "Friends", "Mage Hand", "Minor Illusion", "Poison Spray", "Prestidigitation", "True Strike" ];
+		var levelSpells = [ "Armor of Agathys", "Arms of Hadar", "Charm Person", "Comprehend Languages", "Expeditious Retreat", "Hellish Rebuke", "Hex", "Illusory Script", "Protection from Evil and Good", "Unseen Servant", "Witch Bolt" ];
 		
+		// WEAPON 1
+		document.getElementById('form79_1').value = ("L. Crossbow (20)");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		// WEAPON 2
+		document.getElementById('form78_1').value = ("Dagger (2)");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		
+		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX) "+RandomizeEquipment(["a compononent pouch","an arcane focus"])+", and "+RandomizeEquipment(["a scholar's pack which includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
+
+		armorClass += 11+abilityModifier[1];
+		
+		school = RandomizeEquipment(["the Archfey","the Fiend","the Great Old One"]);
+		
+		if (school == "the Archfey") {
+			levelSpells.push("Faerie Fire","Sleep");
+			document.getElementById('form105_1').value += "Fey Presence. "+CheckDesc("As an action, you can cause each creature in a 10-foot cube originating from you to make a Wisdom saving throw against your warlock spell save DC. The creatures that fail their saving throws are all charmed or frightened by you (your choice) until the end of your next turn. Once you use this feature, you can't use it again until you finish a short or long rest."+"\n")+"\n";
+		}
+		else if (school == "the Fiend") {
+			levelSpells.push("Burning Hands","Command");
+			document.getElementById('form105_1').value += "Dark One's Blessing. "+CheckDesc("When you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level"+"\n")+"\n";
+		}
+		else if (school == "the Great Old One") {
+			levelSpells.push("Dissonant Whispers","Tasha's Hideous Laughter");
+			document.getElementById('form105_1').value += "Awakened Mind. "+CheckDesc("You can telepathically speak to any creature you can see within 30 feet of you. You donn't need to share a language with the creature for it to understand your telepathic utterances, but the creature must be able to understand at least one language."+"\n")+"\n";
+		}
+		
+		LearnSpell(cantripSpells, 2, 0);
+		LearnSpell(levelSpells, 2, 1);
+		InputSpellLists(1);
 	}
 	else if(role=="Wizard"){
+		var cantripSpells = [ "Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike" ];
+		var levelSpells = [ "Alarm", "Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Find Familiar", "Fog Cloud", "Grease", "Identify", "Illusory Script", "Jump", "Longstrider", "Mage Armor", "Magic Missile", "Protection from Evil and Good", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Tasha's Hideous Sickness", "Tenser's Floating Disk", "Thunderwave", "Unseen Servant", "Witch Bolt" ];
+		var spellAmount = (1+abilityModifiers[3]);
 		
+		LearnSpell(cantripSpells, 3, 0);
+		LearnSpell(levelSpells, spellAmount, 1);
+		
+		document.getElementById('form105_1').value += "Arcane Recovery. "+CheckDesc(" Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher."+"\n")+"\n";
+		
+		InputSpellLists(2);
 	}
 	else {
-		console.log("What are you?");
+		console.log("What");
 	}
+}
+
+function ClericEquipment(heavyArmour, heavyWeapon, school) {
+	//WEAPON 1
+	var armorType = undefined;
+	if(heavyWeapon==true) {
+		var dieRoll = Dice(2);
+		if (dieRoll == 1) {
+			document.getElementById('form79_1').value = ("Mace");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+		}
+		else if (dieRoll == 2) {
+			document.getElementById('form79_1').value = ("Warhammer");
+			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+			document.getElementById('form76_1').value = ("1d8(1d10)"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+		}
+	}
+	else if(heavyWeapon==false) {
+		document.getElementById('form79_1').value = ("Mace");
+		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
+		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+	}
+	
+	if(heavyArmour==true && abilityScores[0]>=13) {
+		var dieRoll = Dice(3);
+		if (dieRoll == 1) {
+			armorType = "Scale mail (14+DEX(MAX2))";
+			if (abilityModifier[1]<=2) {
+				armorClass += 14+abilityModifier[1];
+			}
+			else {
+				armorClass += 14+2;
+			}
+		}
+		else if (dieRoll == 2) {
+			armorType = "Leather armor (11+DEX)";
+			armorClass += 11+abilityModifier[1];
+		}
+		else if (dieRoll == 3) {
+			armorType = "Chain mail";
+			armorClass += 16;
+		}
+	}
+	else if(heavyArmour==false || abilityScores<13) {
+		var dieRoll = Dice(2);
+		if (dieRoll == 1) {
+			armorType = "Scale mail (14+DEX(MAX2))";
+			if (abilityModifier[1]<=2) {
+				armorClass += 14+abilityModifier[1];
+			}
+			else {
+				armorClass += 14+2;
+			}
+		}
+		else if (dieRoll == 2) {
+			armorType = "Leather armor (11+DEX)";
+			armorClass += 11+abilityModifier[1];
+		}
+	}
+	//WEAPON 2
+	document.getElementById('form78_1').value = ("L. Crossbow (20)");
+	document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+	document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+	//ATTACKS AND SPELLCASTING
+	//document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to bludgeoning, piercing and slashing damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
+	//FEATURES
+	document.getElementById('form105_1').value += "Divine Domain ("+school+") "+CheckDesc("You have two spells tied to your clerical domain which you always have prepared and doesn't count against the number of spells you can prepare each day.\n")+"\n";
+	//EQUIPMENT
+	document.getElementById('form104_1').innerHTML += (armorType+", a shield (+2 AC), a holy symbol, "+RandomizeEquipment(["a priest's pack including a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin."],["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."]));
+	//Cleric STAT CHANGES
+	armorClass += 2;
 }
 
 function RandomizeEquipment(equipment) {
