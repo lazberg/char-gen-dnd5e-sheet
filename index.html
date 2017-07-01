@@ -1,9 +1,10 @@
 <!DOCTYPE html >
 <html lang="en">
 <head>
+<title>Laz' D&D5e Character Generator</title>
 <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
 <meta charset="utf-8" />
-<style>body{padding:0px;margin:0px;background-color:#65c59c;}
+<style>body{padding:0px;margin:0px;background-color:#4B000F;}
 #FDFXFA_Menu{text-align:center;width:100%;z-index:9999;color:white;background-color:#990012;position:fixed;margin:0px;padding:10px; opacity:0.8;top:0px;min-width:300px;}
 #FDFXFA_Menu a{padding:5px ;cursor:pointer; border:groove 2px white; border-radius:5px; font-family: IDRSymbols; font-size:20px; margin:5px 10px 5px 10px;}
 #FDFXFA_Menu a:hover{background-color:#551033;}
@@ -24,8 +25,8 @@
 <form id='FDFXFA_Form' method='post' action=''><textarea name='pdfdata' id='FDFXFA_Textarea'></textarea></form>
 <div id='FDFXFA_Processing'>&#xF010;</div>
 <div id='FDFXFA_FormType'>FDF</div>
-<div id='FDFXFA_PDFName'>Character_Sheet___Alternative___Form_Fillable.pdf</div>
-<div id='FDFXFA_Menu'><a title='Submit Form'onclick="RollAbility()"<span>New Character</span></a><!--<a title='Go To FirstPage'onclick="app.execMenuItem('FirstPage')">&#xF01C;</a><a title='Go To PrevPage'onclick="app.execMenuItem('PrevPage')">&#xF01D;</a><label id='FDFXFA_PageLabel'><span>1</span></label> / <label id='FDFXFA_PageCount'><span>1</span></label><a title='Go To NextPage'onclick="app.execMenuItem('NextPage')">&#xF01E;</a><a title='Go To LastPage'onclick="app.execMenuItem('LastPage')">&#xF01F;</a>--><a title='Save As Editable PDF'onclick="app.execMenuItem('SaveAs')">&#xF01A;</a></div>
+<div id='FDFXFA_PDFName'>Character_Sheet.pdf</div>
+<div id='FDFXFA_Menu'><label style="font-family:Sans-Serif;">Generate Ability Descriptions<input type="checkbox" id="sDescription" checked="true"/></label><a title='Submit Form'onclick="RollAbility()"<span>New Character</span></a><!--<a title='Go To FirstPage'onclick="app.execMenuItem('FirstPage')">&#xF01C;</a><a title='Go To PrevPage'onclick="app.execMenuItem('PrevPage')">&#xF01D;</a><label id='FDFXFA_PageLabel'><span>1</span></label> / <label id='FDFXFA_PageCount'><span>1</span></label><a title='Go To NextPage'onclick="app.execMenuItem('NextPage')">&#xF01E;</a><a title='Go To LastPage'onclick="app.execMenuItem('LastPage')">&#xF01F;</a>--><a title='Save As Editable PDF'onclick="app.execMenuItem('SaveAs')">&#xF01A;</a></div>
 
 <div id="p1" class="pageArea" style="overflow: hidden; position: relative; width: 935px; height: 1210px; margin-top:20px; margin-left:auto; margin-right:auto; ">
 <script type="text/javascript">
@@ -39,7 +40,7 @@ var imgRollOff = 'RollOff.png';
 var imgRollOn = 'RollOn.png';
 
 function replaceChecks() {
-
+// 
 	//get all the input fields on the page
 	inputs = document.getElementsByTagName('input');
 
@@ -518,12 +519,12 @@ function checkOver(i) {
 <input type="checkbox" class="disableme cbpersuasion" tabindex="75"  id="form26_1" data-objref="655 0 R" data-field-name="ChBx Persuasion" imageName="1/form/655 0 R" images="110100"/>
 <input type="checkbox" class="disableme cbsurvival" tabindex="70"  id="form27_1" data-objref="635 0 R" data-field-name="ChBx Survival" imageName="1/form/635 0 R" images="110100"/>
 <input type="checkbox" class="disableme cbarcana" tabindex="24"  id="form28_1" data-objref="544 0 R" data-field-name="ChBx Arcana" imageName="1/form/544 0 R" images="110100"/>
-<input type="text" class="disableme wis" tabindex="46"  id="form47_1" value="" data-objref="632 0 R" data-field-name="SavingThrows5"/>
-<input type="text" class="disableme dex" tabindex="22"  id="form31_1" value="" data-objref="419 0 R" data-field-name="SavingThrows2"/>
-<input type="text" class="disableme con" tabindex="40"  id="form34_1" value="" data-objref="537 0 R" data-field-name="SavingThrows3"/>
-<input type="text" class="disableme int" tabindex="62"  id="form40_1" value="" data-objref="540 0 R" data-field-name="SavingThrows4"/>
-<input type="text" class="disableme cha" tabindex="97"  id="form44_1" value="" data-objref="647 0 R" data-field-name="SavingThrows6"/>
-<input type="text" class="disableme str" tabindex="8"  id="form37_1" value="" data-objref="414 0 R" data-field-name="SavingThrows"/>
+<input type="text" class="disableme wis savewis" tabindex="46"  id="form47_1" value="" data-objref="632 0 R" data-field-name="SavingThrows5"/>
+<input type="text" class="disableme dex savedex" tabindex="22"  id="form31_1" value="" data-objref="419 0 R" data-field-name="SavingThrows2"/>
+<input type="text" class="disableme con savecon" tabindex="40"  id="form34_1" value="" data-objref="537 0 R" data-field-name="SavingThrows3"/>
+<input type="text" class="disableme int saveint" tabindex="62"  id="form40_1" value="" data-objref="540 0 R" data-field-name="SavingThrows4"/>
+<input type="text" class="disableme cha savecha" tabindex="97"  id="form44_1" value="" data-objref="647 0 R" data-field-name="SavingThrows6"/>
+<input type="text" class="disableme str savestr" tabindex="8"  id="form37_1" value="" data-objref="414 0 R" data-field-name="SavingThrows"/>
 <input type="text" class="disableme dex sleightofhand" tabindex="31"  id="form29_1" value="" data-objref="425 0 R" data-field-name="SleightofHand"/>
 <input type="text" class="disableme wis medicine" tabindex="49"  id="form30_1" value="" data-objref="636 0 R" data-field-name="Medicine"/>
 <input type="text" class="disableme int religion" tabindex="86"  id="form32_1" value="" data-objref="553 0 R" data-field-name="Religion"/>
@@ -536,7 +537,7 @@ function checkOver(i) {
 <input type="text" class="disableme cha performance" tabindex="52"  id="form42_1" value="" data-objref="650 0 R" data-field-name="Performance"/>
 <input type="text" class="disableme cha intimidation" tabindex="51"  id="form43_1" value="" data-objref="649 0 R" data-field-name="Intimidation"/>
 <input type="text" class="disableme cha persuasion" tabindex="96"  id="form45_1" value="" data-objref="656 0 R" data-field-name="Persuasion"/>
-<input type="text" class="disableme int insight" tabindex="48"  id="form46_1" value="" data-objref="634 0 R" data-field-name="Insight"/>
+<input type="text" class="disableme wis insight" tabindex="48"  id="form46_1" value="" data-objref="634 0 R" data-field-name="Insight"/>
 <input type="text" class="disableme wis perception" tabindex="89"  id="form48_1" value="" data-objref="637 0 R" data-field-name="Perception"/>
 <input type="text" class="disableme int nature" tabindex="85"  id="form49_1" value="" data-objref="551 0 R" data-field-name="Nature"/>
 <input type="text" class="disableme str athletics" tabindex="10"  id="form50_1" value="" data-objref="342 0 R" data-field-name="Athletics"/>
