@@ -956,7 +956,8 @@ function ClassAbilities(role) {
 		}
 		LearnSpell(cantripSpells, 2, 0);
 		LearnSpell(levelSpells, 2, 1);
-		
+		armorClass += 11+abilityModifier[1];
+		armorClass += 2;
 		InputSpellLists(1);
 	}
 	else if(role=="Fighter"){
@@ -1169,8 +1170,13 @@ function ClassAbilities(role) {
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
 		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
 		
-		if(abilityModifier[0]>=13) {
+		if((abilityScores[0]) >= 13) {
+			console.log("yes");
 			armorClass += 16;
+		}
+		else {
+			console.log("no");
+			armorClass += 10+abilityModifier[1];
 		}
 		document.getElementById('form105_1').value += "Divine Sense. "+CheckDesc("As an action, you can open your awareness to detect forces. Until the end of your next turn, you know the location of any celestial, fiend, or undead within 60 feet of you that is not behind total cover. You know the type of any being whose presence you sense, but not its identity. You can use this feature "+(1+abilityModifier[1])+" times between each long rest.")+"\n";
 
@@ -1256,6 +1262,9 @@ function ClassAbilities(role) {
 		document.getElementById('form105_1').value += "Expertise. "+CheckDesc("Choose two of your skill proficiencies, or one of your skill proficiencies and your proficiency with thieves' tools. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies."+"\n")+"\n";
 		
 		document.getElementById('form105_1').value += "Sneak Attack (1d6). "+CheckDesc("Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon. You don't need advantage on the attack roll if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll."+"\n")+"\n";
+		
+		armorClass += 11+abilityModifier[1];
+		
 		//document.getElementById('form105_1').value += "Expertise. "+CheckDesc(""+"\n")+"\n";
 		InputSpellLists(1);
 	}
@@ -1277,6 +1286,7 @@ function ClassAbilities(role) {
 		if (school=="Wild Magic") {
 			document.getElementById('form105_1').value += "Wild Magic Surge. "+CheckDesc("Once per turn, the DM can have you roll a d20 immediately after you cast a sorcerer spell of 1st level or higher. If you roll a 1, roll on the Wild Magic Surge table to create a magical effect."+"\n")+"\n";
 			document.getElementById('form105_1').value += "Tides of Chaos. "+CheckDesc("You can manipulate the forces of chance and chaos to gain advantage on one attack roll, ability check, or saving throw. Once you do so, you must finish a long rest before you can use this feature again. Any time before you regain the use of this feature, the DM can have you roll on the Wild Magic Surge table immediately after you cast a sorcerer spell of 1st level or higher. You then regain the use of this feature."+"\n")+"\n";
+			armorClass += 10+abilityModifier[1];
 		}
 		else if (school=="Draconic Bloodline") {
 			if (!languages.includes("Draconic")) {
@@ -1287,7 +1297,7 @@ function ClassAbilities(role) {
 			document.getElementById('form105_1').value += "Dragon Ancestor ("+dragonBlood.dragon+" descent, "+dragonBlood.damage+" damage). "+CheckDesc("Whenever you make a Charisma check when interacting with dragons, your proficiency bonus is doubled if it applies to the check."+"\n")+"\n";
 			
 			document.getElementById('form105_1').value += "Draconic Resilience. "+CheckDesc("At 1st level, your hit point maximum increases by 1 and increases by 1 again whenever you gain a level in this class. Additionally, parts of your skin are covered by a thin sheen of dragon-like scales. When you aren't wearing armor, your AC equals 13 + your Dexterity modifier."+"\n")+"\n";
-			armorClass+=(13+abilityModifiers[1]);
+			armorClass+=(13+abilityModifier[1]);
 		}
 		InputSpellLists(1);
 	}
@@ -1330,7 +1340,7 @@ function ClassAbilities(role) {
 	else if(role=="Wizard"){
 		var cantripSpells = [ "Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Fire Bolt", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "True Strike" ];
 		var levelSpells = [ "Alarm", "Burning Hands", "Charm Person", "Chromatic Orb", "Color Spray", "Comprehend Languages", "Detect Magic", "Disguise Self", "Expeditious Retreat", "False Life", "Feather Fall", "Find Familiar", "Fog Cloud", "Grease", "Identify", "Illusory Script", "Jump", "Longstrider", "Mage Armor", "Magic Missile", "Protection from Evil and Good", "Ray of Sickness", "Shield", "Silent Image", "Sleep", "Tasha's Hideous Sickness", "Tenser's Floating Disk", "Thunderwave", "Unseen Servant", "Witch Bolt" ];
-		var spellAmount = (1+abilityModifiers[3]);
+		var spellAmount = (1+abilityModifier[3]);
 		
 		LearnSpell(cantripSpells, 3, 0);
 		LearnSpell(levelSpells, spellAmount, 1);
@@ -1338,6 +1348,7 @@ function ClassAbilities(role) {
 		document.getElementById('form105_1').value += "Arcane Recovery. "+CheckDesc(" Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher."+"\n")+"\n";
 		
 		InputSpellLists(2);
+		armorClass += 10+abilityModifier[1];
 	}
 	else {
 		console.log("What");
@@ -1413,6 +1424,9 @@ function ClericEquipment(heavyArmour, heavyWeapon, school) {
 	//EQUIPMENT
 	document.getElementById('form104_1').innerHTML += (armorType+", a shield (+2 AC), a holy symbol, "+RandomizeEquipment(["a priest's pack including a backpack, a blanket, 10 candles, a tinderbox, an alms box, 2 blocks of incense, a censer, vestments, 2 days of rations, and a waterskin."],["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."]));
 	//Cleric STAT CHANGES
+	if (armorClass<=5) {
+		armorClass += 10;
+	}
 	armorClass += 2;
 }
 
