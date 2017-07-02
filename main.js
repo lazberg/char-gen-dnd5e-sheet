@@ -2020,8 +2020,15 @@ function RollAlignment() {
 }
 
 function RollPersonality() {
-	document.getElementById('form101_1').innerHTML = RandomizeEquipment(bg.pers)+"\n"; // PERSONALITY TRAITS
-	document.getElementById('form101_1').innerHTML += RandomizeEquipment(bg.pers); // PERSONALITY TRAITS 2
+	var rng1 = RandomizeEquipment(bg.pers);
+	document.getElementById('form101_1').innerHTML = rng1+"\n"; // PERSONALITY TRAITS
+	for (var i=0;i==0;i) {
+		var rng2 = RandomizeEquipment(bg.pers);
+		if (rng1!=rng2) {
+			document.getElementById('form101_1').innerHTML += rng2; // PERSONALITY TRAITS 2
+			i++;
+		}
+	}
 	document.getElementById('form100_1').innerHTML = RandomizeEquipment(bg.bond); // BONDS
 	document.getElementById('form99_1').innerHTML = RandomizeEquipment(bg.idea); // IDEALS
 	document.getElementById('form98_1').innerHTML = RandomizeEquipment(bg.flaw); // FLAWS
