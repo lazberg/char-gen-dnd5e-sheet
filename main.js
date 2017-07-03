@@ -23,6 +23,7 @@ var armorClass = 0;
 var cantrips = [];
 var firstLevel = [];
 var school = undefined;
+var standardArray = [15,14,13,12,10,8];
 
 //ACOLYTE TRAITS
 var acoTraits = [ 
@@ -662,6 +663,7 @@ function ResetStats() {
 	firstLevel = [];
 	hitPoints = 0;
 	school = undefined;
+	standardArray = [15,14,13,12,10,8];
 	halfElf.namepool = RandomStatPriority(namePool[0], namePool[1]);
 	//console.log(halfElf.namepool);
 	document.getElementById('form102_1').innerHTML="";
@@ -785,18 +787,32 @@ function RollAbility(){
 	abilityModifier = [];
 	primary = 0;
 	secondary = 0;
-	for(var i = 0;i<6;i++){
-		var rollTotal = 0;
-		var roll1 = 0;
-		var roll2 = 0;
-		var roll3 = 0;
-		var roll4 = 0;
-		roll1 = Dice(6);
-		roll2 = Dice(6);
-		roll3 = Dice(6);
-		roll4 = Dice(6);
-		rollTotal = roll1+roll2+roll3+roll4-Math.min(roll1,roll2,roll3,roll4)/*+raceBonus[i]*/;
-		abilityScores.push(rollTotal);
+	if (document.getElementById('useStandard').checked == true) {
+		for(var i = 0;i<6;i++) {
+			var rollTotal = RandomizeEquipment(standardArray);
+			for (var t = 0;t<standardArray.length;t++) {
+				if (standardArray[t] == rollTotal){
+					standardArray.splice(t,1);
+					t = 6;
+				}
+			}
+			abilityScores.push(rollTotal);
+		}
+	}
+	else {
+		for(var i = 0;i<6;i++){
+			var rollTotal = 0;
+			var roll1 = 0;
+			var roll2 = 0;
+			var roll3 = 0;
+			var roll4 = 0;
+			roll1 = Dice(6);
+			roll2 = Dice(6);
+			roll3 = Dice(6);
+			roll4 = Dice(6);
+			rollTotal = roll1+roll2+roll3+roll4-Math.min(roll1,roll2,roll3,roll4)/*+raceBonus[i]*/;
+			abilityScores.push(rollTotal);
+		}
 	}
 	primary = Math.max(abilityScores[0], abilityScores[1], abilityScores[2], abilityScores[3], abilityScores[4], abilityScores[5] );
 	abilityScores.splice(abilityScores.indexOf(primary), 1);
@@ -1260,6 +1276,9 @@ function DamageCalc(stat, tohit, prof) {
 		if (stat<0) {
 			return stat;
 		}
+		else if(stat==0) {
+			return "";
+		}
 		else {
 			return "+"+stat;
 		}
@@ -1289,8 +1308,8 @@ function InputSpellLists(daily) {
 	}
 	
 	if(firstLevel.length>0) {
-		document.getElementById('form103_1').innerHTML += "\n\n"+"";
-		document.getElementById('form103_1').innerHTML += "-- 1st Level ("+daily+" daily)\n";
+		document.getElementById('form103_1').innerHTML += "\n"+"";
+		document.getElementById('form103_1').innerHTML += "-- 1st Level ("+daily+" slot)\n";
 		for(var i=0;i<firstLevel.length;i++){
 			document.getElementById('form103_1').innerHTML += firstLevel[i];
 			if(i<(firstLevel.length-1)) {
@@ -1305,17 +1324,17 @@ function ClassAbilities(role) {
 		//WEAPON 1
 		document.getElementById('form79_1').value = ("Greataxe");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" S");
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Handaxe (2)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" S");
 		//WEAPON 3
 		document.getElementById('form77_1').value = ("Javelin (4)");
 		document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 		//ATTACKS AND SPELLCASTING
-		document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to bludgeoning, piercing and slashing damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
+		document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to B, P and S damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
 		//FEATURES
 		document.getElementById('form105_1').value += "Unarmored Defense. "+CheckDesc("While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.")+"\n";
 		//EQUIPMENT
@@ -1329,11 +1348,11 @@ function ClassAbilities(role) {
 		//WEAPON 1
 		document.getElementById('form79_1').value = ("Rapier");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Dagger");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		//ATTACKS AND SPELLCASTING
 		var cantripSpells = [ "Blade Ward", "Dancing Lights", "Friends", "Light", "Mage Hand", "Mending", "Message", "Minor Illusion", "Prestidigitation", "True Strike", "Vicious Mockery" ];
 		var levelSpells = [ "Animal Friendship", "Bane", "Charm Person", "Comprehend Languages", "Cure Wounds", "Detect Magic", "Disguise Self", "Dissonant Whispers", "Faerie Fire", "Feather Fall", "Healing Word", "Heroism", "Identify", "Illusory Script", "Longstrider", "Silent Image", "Sleep", "Speak with Animals", "Tasha's Hideous Laughter", "Thunderwave", "Unseen Servant" ];
@@ -1453,11 +1472,11 @@ function ClassAbilities(role) {
 		document.getElementById('form79_1').value = ("Scimitar");
 		if(abilityModifier[0]>=abilityModifier[1]){
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" S");
 		}
 		else if(abilityModifier[0]<abilityModifier[1]){
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" slashing");
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" S");
 		}
 		//EQUIPMENT
 		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX), a wooden shield (+2 AC), a druidic focus and "+"an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit.");
@@ -1480,11 +1499,11 @@ function ClassAbilities(role) {
 			document.getElementById('form79_1').value = ("Longbow (20)");
 			if (school == "Archery") {
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1]+2, true, true));
-				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 			}
 			else {
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 			}
 			armorType = "Leather armor (11+DEX)";
 			armorClass = 11+abilityModifier[1];
@@ -1503,17 +1522,17 @@ function ClassAbilities(role) {
 			document.getElementById('form78_1').value = ("L. Crossbow (20)");
 			if (school == "Archery") {
 				document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1]+2, true, true));
-				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 			}
 			else {
 				document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+				document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 			}
 		}
 		else if (rng == 2) {
 			document.getElementById('form78_1').value = ("Handaxe (2)");
 			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
-			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" S");
 		}
 		rng = Dice(2);
 		if (rng == 1) {
@@ -1522,17 +1541,17 @@ function ClassAbilities(role) {
 			if (rng == 1) {
 				document.getElementById('form77_1').value = ("Flail");
 				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form74_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+				document.getElementById('form74_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" B");
 			}
 			else if (rng == 2) {
 				document.getElementById('form77_1').value = ("Maul");
 				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form74_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+				document.getElementById('form74_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" B");
 			}
 			else if (rng == 3) {
 				document.getElementById('form77_1').value = ("Longsword");
 				document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form74_1').value = ("1d8 (1d10)"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+				document.getElementById('form74_1').value = ("1d8 "+DamageCalc(abilityModifier[0], false, true)+" S");
 			}
 			else if (rng ==4) {
 				document.getElementById('form77_1').value = ("Shortsword");
@@ -1544,10 +1563,10 @@ function ClassAbilities(role) {
 				}
 				
 				if (school=="Dueling") {
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc((abilityModifier[0]+2), false, true)+" piercing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc((abilityModifier[0]+2), false, true)+" P");
 				}
 				else {
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 				}
 			}
 			armorType += ", a shield (+2 AC)";
@@ -1559,22 +1578,22 @@ function ClassAbilities(role) {
 				document.getElementById('form77_1').value = ("Shortsword (2)");
 				if(abilityModifier[0]>=abilityModifier[1]){
 					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 				}
 				else if(abilityModifier[0]<abilityModifier[1]){
 					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" P");
 				}
 			}
 			else if (rng == 2) {
 				document.getElementById('form77_1').value = ("Scimitar (2)");
 				if(abilityModifier[0]>=abilityModifier[1]){
 					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[0], true, true));
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" S");
 				}
 				else if(abilityModifier[0]<abilityModifier[1]){
 					document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
-					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" slashing");
+					document.getElementById('form74_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" S");
 				}
 			}
 			
@@ -1615,15 +1634,15 @@ function ClassAbilities(role) {
 		//WEAPON 1
 		document.getElementById('form79_1').value = ("Shortsword");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" P");
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Dart (10)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		//WEAPON 3
 		document.getElementById('form77_1').value = ("Fist");
 		document.getElementById('form65_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form74_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form74_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		
 		document.getElementById('form105_1').value += "Martial Arts. "+CheckDesc("Your practice of martial arts gives you mastery of combat styles that use unarmed strikes, and monk weapons, which are shortswords and any simple melee weapon that don't have the two-handed or heavy property. You gain the following benefits while you are unarmed or wielding only monk weapons and you aren't wearing armor or wielding a shield: You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes and monk weapons. You can roll a d4 in place of the normal damage of your unarmed strike or monk weapon. This die changes as you gain monk levels. When you use the attack action with an unarmed strike or a monk weapon on your turn, you can make one unarmed strike as a bonus action.")+"\n";
 		
@@ -1642,22 +1661,22 @@ function ClassAbilities(role) {
 			if (rng == 1) {
 				document.getElementById('form79_1').value = ("Flail");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+				document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" B");
 			}
 			else if (rng == 2) {
 				document.getElementById('form79_1').value = ("Maul");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+				document.getElementById('form76_1').value = ("2d6"+DamageCalc(abilityModifier[0], false, true)+" B");
 			}
 			else if (rng == 3) {
 				document.getElementById('form79_1').value = ("Longsword");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("1d8 (1d10)"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+				document.getElementById('form76_1').value = ("1d8 "+DamageCalc(abilityModifier[0], false, true)+" S");
 			}
 			else if (rng ==4) {
 				document.getElementById('form79_1').value = ("Shortsword");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 			}
 			armorType += ", a shield (+2 AC)";
 			armorClass += 2;
@@ -1667,19 +1686,19 @@ function ClassAbilities(role) {
 			if (rng == 1) {
 				document.getElementById('form79_1').value = ("Shortsword (2)");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 			}
 			else if (rng == 2) {
 				document.getElementById('form79_1').value = ("Scimitar (2)");
 				document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+				document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" S");
 			}
 			
 		}
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Javelins (5)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 		
 		if((abilityScores[0]) >= 13) {
 			console.log("yes");
@@ -1732,11 +1751,11 @@ function ClassAbilities(role) {
 		//WEAPON 1
 		document.getElementById('form79_1').value = ("Shortsword (2)");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" P");
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Longbow (20)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 
 		document.getElementById('form104_1').innerHTML += (armorType+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 
@@ -1750,23 +1769,23 @@ function ClassAbilities(role) {
 		if (rng==1) {
 			document.getElementById('form79_1').value = ("Shortsword");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" P");
 		}
 		else if (rng==2) {
 			document.getElementById('form79_1').value = ("Rapier");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 		}
 		rng = Dice(2);
 		if (rng==1) {
 			document.getElementById('form78_1').value = ("Shortsword");
 			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" P");
 		}
 		else if (rng==2) {
 			document.getElementById('form78_1').value = ("Shortbow (20)");
 			document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
-			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+			document.getElementById('form75_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" P");
 		}
 		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX), and "+RandomizeEquipment(["a burglar's pack, which include a backpack, a bag of 1000 ball bearings, 10 feet of string, a bell, 5 candles, a crowbar, a hammer, 10 pitons, a hooded lantern, 2 flasks of  oil, 5 days rations, a tinderbox, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."],["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 
@@ -1784,11 +1803,11 @@ function ClassAbilities(role) {
 		// WEAPON 1
 		document.getElementById('form79_1').value = ("L. Crossbow (20)");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 		// WEAPON 2
 		document.getElementById('form78_1').value = ("Dagger (2)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		
 		document.getElementById('form104_1').innerHTML += (RandomizeEquipment(["A compononent pouch","An arcane focus"])+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 
@@ -1819,11 +1838,11 @@ function ClassAbilities(role) {
 		// WEAPON 1
 		document.getElementById('form79_1').value = ("L. Crossbow (20)");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 		// WEAPON 2
 		document.getElementById('form78_1').value = ("Dagger (2)");
 		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+		document.getElementById('form75_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		
 		document.getElementById('form104_1').innerHTML += ("Leather armor (11+DEX) "+RandomizeEquipment(["a compononent pouch","an arcane focus"])+", and "+RandomizeEquipment(["a scholar's pack which includes a backpack, a book of lore, a bottle of ink, an ink pen, 10 sheets of parchment, a little bag of sand, and a small knife."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 
@@ -1857,12 +1876,12 @@ function ClassAbilities(role) {
 		if (rng==1) {
 			document.getElementById('form79_1').value = ("Quarterstaff");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form76_1').value = ("1d6 (1d8)"+DamageCalc(abilityModifier[1], false, true)+" bludgeoning");
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" B");
 		}
 		else if (rng==2) {
 			document.getElementById('form79_1').value = ("Dagger");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[1], true, true));
-			document.getElementById('form76_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+			document.getElementById('form76_1').value = ("1d4"+DamageCalc(abilityModifier[1], false, true)+" P");
 		}
 		
 		LearnSpell(cantripSpells, 3, 0);
@@ -1888,18 +1907,18 @@ function ClericEquipment(heavyArmour, heavyWeapon, school) {
 		if (dieRoll == 1) {
 			document.getElementById('form79_1').value = ("Mace");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[0], false, true)+" B");
 		}
 		else if (dieRoll == 2) {
 			document.getElementById('form79_1').value = ("Warhammer");
 			document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-			document.getElementById('form76_1').value = ("1d8(1d10)"+DamageCalc(abilityModifier[0], false, true)+" bludgeoning");
+			document.getElementById('form76_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" B");
 		}
 	}
 	else if(heavyWeapon==false) {
 		document.getElementById('form79_1').value = ("Mace");
 		document.getElementById('form68_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" slashing");
+		document.getElementById('form76_1').value = ("1d12"+DamageCalc(abilityModifier[0], false, true)+" S");
 	}
 	
 	if(heavyArmour==true && abilityScores[0]>=13) {
@@ -1941,9 +1960,9 @@ function ClericEquipment(heavyArmour, heavyWeapon, school) {
 	//WEAPON 2
 	document.getElementById('form78_1').value = ("L. Crossbow (20)");
 	document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
-	document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
+	document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" P");
 	//ATTACKS AND SPELLCASTING
-	//document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to bludgeoning, piercing and slashing damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
+	//document.getElementById('form103_1').innerHTML = "Rage (2 per day, +2 DMG). "+CheckDesc("On your turn you can enter a rage as a bonus action. While raging, you gain advantage on Strength checks and Strength saving throws. When you make a melee weapon attack using Strength, you gain a bonus to the damage roll (+2). You have resistance to B, P and S damage. Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action. You can only use this ability 2 times per day, which refresh when you have taken a long rest.\n")+"\n";
 	//FEATURES
 	document.getElementById('form105_1').value += "Divine Domain ("+school+") "+CheckDesc("You have two spells tied to your clerical domain which you always have prepared and doesn't count against the number of spells you can prepare each day.\n")+"\n";
 	//EQUIPMENT
@@ -2019,6 +2038,9 @@ function LearnTool(toolList) {
 
 function RollAlignment() {
 	var morality = RandomizeEquipment(["Good", "Neutral", "Evil" ]);
+	if (document.getElementById('sEvil').checked == false) {
+		var morality = RandomizeEquipment(["Good", "Neutral" ]);
+	}
 	var alignment = RandomizeEquipment(["Lawful", "Neutral", "Chaotic" ]);
 	if(morality == alignment) {
 		morality = "True";
