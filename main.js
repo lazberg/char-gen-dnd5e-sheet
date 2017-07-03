@@ -636,7 +636,17 @@ var flawTraits = [
 
 
 function RollClass() {
-	classRoll = classes[Math.floor((Math.random() *classes.length))];
+	if (document.getElementById('paramClass').value != "all") {
+		for (var i=0;i<12;i++) {
+			if(classes[i].role==document.getElementById('paramClass').value) {
+				classRoll = classes [i];
+				i = 12;
+			}
+		}
+	}
+	else {
+		classRoll = classes[Math.floor((Math.random() *classes.length))];
+	}
 	//classRoll = classes[2];
 }
 
