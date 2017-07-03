@@ -1725,8 +1725,8 @@ function ClassAbilities(role) {
 		document.getElementById('form76_1').value = ("1d6"+DamageCalc(abilityModifier[1], false, true)+" piercing");
 		//WEAPON 2
 		document.getElementById('form78_1').value = ("Longbow (20)");
-		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[0], true, true));
-		document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[0], false, true)+" piercing");
+		document.getElementById('form66_1').value = (DamageCalc(abilityModifier[1], true, true));
+		document.getElementById('form75_1').value = ("1d8"+DamageCalc(abilityModifier[1], false, true)+" piercing");
 
 		document.getElementById('form104_1').innerHTML += (armorType+", and "+RandomizeEquipment(["an explorer's pack that includes a backpack, a bedroll, 2 costumes, 5 candles, 5 days of rations, a waterskin, and a disguise kit."],["a dungeoneer's pack which includes a backpack, a crowbar, a hammer, 10 pitons, 10 torches, a tinderbox, 10 days of rations, and a waterskin. The pack also has 50 feet of hempen rope strapped to the side of it."]));
 
